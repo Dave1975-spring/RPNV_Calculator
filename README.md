@@ -2,7 +2,7 @@
 
 (current released version 0.1.0-alpha)
 
-## WHAT IT IS
+### WHAT IT IS
 
 RPNV is an RPN calculator inspired by HP Voyager calculator series.
 It is coded in C, in FreeDos, using FED text editor and Open Watcom 1.9 
@@ -13,11 +13,11 @@ There could be some bugs in the code, so it should no be used for any valuable c
 
 If you have any comment or whatever feel free to send to me a note.
 
-## WHAT HAS BEEN IMPLEMENTED AND WHAT IS NOT:
+### WHAT HAS BEEN IMPLEMENTED AND WHAT IS NOT:
 
 The calculator has a 4 level stack (X,Y,Z,T registers), the Last-X register and 10 memory registers (named from 0 to 9) where values can be stored and recall. The basic operation, the trigonometric function and few others are available as well. No programming capability has been implemented as well as statistical function. Maybe in the future.
 
-## HOW IT WORKS:
+### HOW IT WORKS:
 
 Use the arrow keys to move the cursor on the desired button then hit SPACE bar to push the button. All the implemented functions can be used in this way.
 Some functions has a keyboard shortcut:
