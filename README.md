@@ -21,15 +21,15 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 Some functions has a keyboard shortcut:
 - all numbers can be used
 - all the four basic operation: + - * /
-- the ENTER key work as the ENTER button on the calculator
-- K switch on and off the show of the stack content beside the LCD display
-- T rotate the stack value
-- L recall the value from the Last-X register
-- M show the content of the memory registers from 0 to 9
-- S store the current value from stack X to a memory register from 0 to 9
-- C recall the value from a memory register from 0 to 9 and place it in the stack X register
-- P recall the pi-greek value
-- F toggle the F second function 
+- the ENTER key works as the ENTER button on the calculator
+- K switches on and off the show of the stack content beside the LCD display
+- T rotates the stack value
+- L recalls the value from the Last-X register
+- M shows the content of the memory registers from 0 to 9
+- S stores the current value from stack X to a memory register from 0 to 9
+- C recalls the value from a memory register from 0 to 9 and place it in the stack X register
+- P recalls the pi-greek value
+- F toggles the F second function 
 
 ![image](https://github.com/user-attachments/assets/9dd779b8-923e-40fd-a5bf-e9af1f1ca8d8)
 
