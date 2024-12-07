@@ -1,7 +1,5 @@
 # RPNV
 
-(current released version 0.1.0-alpha)
-
 ### WHAT IT IS
 
 RPNV is an RPN calculator inspired by HP Voyager calculator series.
@@ -31,7 +29,8 @@ Some functions has a keyboard shortcut:
 - S stores the current value from stack X to a memory register from 0 to 9
 - C recalls the value from a memory register from 0 to 9 and place it in the stack X register
 - P recalls the pi-greek value
-- F toggles the F second function 
+- F toggles the F second function
+- E for EEX function 
 
 ![image](https://github.com/user-attachments/assets/9dd779b8-923e-40fd-a5bf-e9af1f1ca8d8)
 
