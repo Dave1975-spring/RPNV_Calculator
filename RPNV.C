@@ -1099,7 +1099,7 @@ void show_help(int curpos)   // HELP window if H is pressed
     _clearscreen(_GWINDOW); 
 
     _settextposition(2,1);
-    _outtext(" RPNV 0.1.0 is an RPN calc inspired by HP Voyager calc\n");
+    _outtext(" RPNV 0.2.1 is an RPN calc inspired by HP Voyager calc\n");
     _outtext("        Made for fun by Davide Erbetta in 2024        \n"); 
     _outtext(" Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
     _outtext("    ----------------------------------------------    \n");
