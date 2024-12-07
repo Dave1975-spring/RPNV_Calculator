@@ -18,7 +18,9 @@ double memory[10] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; // memory
 int stackx_digit = 0;  // total number of digits in stack X
 int stackx_dec_digit = 0; // number of decimal digits in stack X
 int stackx_exp = 0; // 10^ exponent of stackx value
+int stackx_exp_digit = 0; // numer of digit inserted in stackx_exp
 bool stackx_dec = false; // true = decimal number ; false = integer
+bool stackx_exp_hit = false; // track if EEX button has been just pressed
 bool enter_hit = false; // track if ENTER has been just hit
 bool func_hit = false; // track if a standard function key has been just hit
 bool store_hit = false; // track if the STO button has been just hit
@@ -340,14 +342,16 @@ void define_digits()
 void update_lcd()
 {
     char text_lcd[25];
+    char text_exp[5];
 
     // create the string to be shown in LCD
 
-    if ((fabs(stack[0])>1.0E12) || (fabs(stack[0])<1.0E-12)) sprintf(text_lcd,"%1.*E",stackx_digit,stack[0]);
-    else {
+    if ( ((fabs(stack[0])<1.0E12) && (fabs(stack[0])>1.0E-12)) || (stack[0]==0.0) ) {
 	if (stackx_dec) sprintf(text_lcd,"%#1.*Lf",stackx_dec_digit,stack[0]);
 	else sprintf(text_lcd,"%1.*Lf",stackx_dec_digit,stack[0]);
     }
+    else sprintf(text_lcd,"%1.*E",stackx_digit,stack[0]);
+
     _setbkcolor(3);
     _settextcolor(0);
     _settextwindow(3,15,5,42);
@@ -371,6 +375,12 @@ void update_lcd()
 
     _settextposition(3,13);
     _outtext("RAD");     // by now only rad mode implemented
+
+    if (stackx_exp_hit==true) {
+	_settextposition(2,21);
+	sprintf(text_exp,"E%+03i",stackx_exp);
+	_outtext(text_exp);
+    }
 
     if (show_stack) show_full_stack();
 }
@@ -533,6 +543,24 @@ void recall_memory(int mempos)
     func_hit = true;
 }
 
+void stackx_by_exp()
+{
+    int i;
+
+    if (stackx_exp>0) for (i=1 ; i<= stackx_exp; i++) stack[0] = stack[0] * 10.0;
+    if (stackx_exp<0) for (i=-1 ; i>= stackx_exp; i--) stack[0] = stack[0] / 10.0;
+
+    stackx_exp = 0;
+    stackx_exp_hit = false;
+}
+
+void add_number_exp(int num) // move the unit to tens and add a new unit 
+{
+    int buf;
+    buf = (int)(stackx_exp/10); // get the tens
+    stackx_exp = (stackx_exp - buf*10) * 10 + num; // subtract the tens and add the unit
+}
+
 void add_number(double num)
 {
     int i;
@@ -580,6 +608,7 @@ void hit_button_at_curpos(int curpos)
 	case 1:  // sqrt(x) / x^2
 	    if (store_hit) store_hit = false;
 	    if (recall_hit) recall_hit = false;
+	    if (stackx_exp_hit==true) stackx_by_exp();
 	    if (second_f==false) {
 		lastx = stack[0];
 		stack[0] = sqrt(stack[0]);
@@ -599,6 +628,7 @@ void hit_button_at_curpos(int curpos)
 	case 2:  // e^x / LN
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false;
+	    if (stackx_exp_hit==true) stackx_by_exp();
 	    if (second_f==false) {
 		lastx = stack[0];
 		stack[0] = exp(stack[0]);
@@ -618,6 +648,7 @@ void hit_button_at_curpos(int curpos)
 	case 3:  // 10^x / LOG10
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
+	    if (stackx_exp_hit==true) stackx_by_exp();
 	    if (second_f==false) {
 		lastx = stack[0];
 		stack[0] = pow(10.0,stack[0]);
@@ -638,6 +669,7 @@ void hit_button_at_curpos(int curpos)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_by_exp();
 		lastx = stack[0];
 		stack[0] = pow(stack[1],stack[0]);
 		pull_stack();
@@ -653,6 +685,7 @@ void hit_button_at_curpos(int curpos)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_by_exp();
 		lastx = stack[0];
 		stack[0] = 1.0 / stack[0];
 		pull_stack();
@@ -667,11 +700,12 @@ void hit_button_at_curpos(int curpos)
 	case 6:  // CHS / PI
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
-	    if (second_f==false) stack[0] = stack[0] * -1.0;
+	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_exp *= -1;
+		else stack[0] = stack[0] * -1.0;
+	    }
 	    else {
 		stack[0] = M_PI;
-		//stackx_digit = 12;
-		//stackx_dec_digit = 11;
 		func_hit = true;
 		second_f = false;
 	    }
@@ -682,6 +716,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(7);
 		else if (recall_hit==true) recall_memory(7);
+		else if (stackx_exp_hit==true) add_number_exp(7);
 		else add_number(7.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -692,6 +727,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(8);
 		else if (recall_hit==true) recall_memory(8);
+		else if (stackx_exp_hit==true) add_number_exp(8);
 		else add_number(8.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -702,6 +738,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(9);
 		else if (recall_hit==true) recall_memory(9);
+		else if (stackx_exp_hit==true) add_number_exp(9);
 		else add_number(9.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -712,6 +749,7 @@ void hit_button_at_curpos(int curpos)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false;
 	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_by_exp();
 		if (store_hit) store_hit = false; 
 		lastx = stack[0];
 		stack[0] = stack[1]/stack[0];
@@ -726,6 +764,7 @@ void hit_button_at_curpos(int curpos)
 	case 13: // SIN / ASIN
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
+	    if (stackx_exp_hit==true) stackx_by_exp();
 	    lastx = stack[0];
 	    if (second_f == false) stack[0] = sin(stack[0]);
 	    else {
@@ -740,6 +779,7 @@ void hit_button_at_curpos(int curpos)
 	case 14: // COS / ACOS
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false;
+	    if (stackx_exp_hit==true) stackx_by_exp();
 	    lastx = stack[0];
 	    if (second_f == false) stack[0] = cos(stack[0]);
 	    else {
@@ -754,6 +794,7 @@ void hit_button_at_curpos(int curpos)
 	case 15: // TAN / ATAN
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
+	    if (stackx_exp_hit==true) stackx_by_exp();
 	    lastx = stack[0];
 	    if (second_f == false) stack[0] = tan(stack[0]);
 	    else {
@@ -769,10 +810,17 @@ void hit_button_at_curpos(int curpos)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
-		print_message(14,"Not yet implemented"); 
+		if (stackx_exp_hit==false) {
+		    if ((func_hit) || (stack[0]==0.0)) { 
+			lastx=stack[0];
+			stack[0] = 1.0;
+		    }
+		    stackx_exp_hit = true;
+		}
 	    } 
 	    else {
 		if (stackx_dec_digit==0) {
+		    if (stackx_exp_hit==true) stackx_by_exp();
 		    stack[0] = factorial_int(stack[0]);
 		    func_hit = true;
 		    second_f = false;
@@ -788,6 +836,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(4); 
 		else if (recall_hit==true) recall_memory(4); 
+		else if (stackx_exp_hit==true) add_number_exp(4);
 		else add_number(4.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -798,6 +847,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(5); 
 		else if (recall_hit==true) recall_memory(5); 
+		else if (stackx_exp_hit==true) add_number_exp(5);
 		else add_number(5.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -808,6 +858,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(6); 
 		else if (recall_hit==true) recall_memory(6); 
+		else if (stackx_exp_hit==true) add_number_exp(6);
 		else add_number(6.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -818,6 +869,7 @@ void hit_button_at_curpos(int curpos)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_by_exp();
 		lastx = stack[0]; 
 		stack[0] = stack[1]*stack[0];
 		pull_stack();
@@ -831,7 +883,10 @@ void hit_button_at_curpos(int curpos)
 	case 23: // rotate stack
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
-	    if (second_f==false) rotate_stack();
+	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_by_exp();
+		rotate_stack();
+	    }
 	    else {
 		print_message(14,"Not yet implemented");
 	    } 
@@ -841,7 +896,10 @@ void hit_button_at_curpos(int curpos)
 	case 24: // x<>y /
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
-	    if (second_f==false) swap_stackxy();
+	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_by_exp();
+		swap_stackxy();
+	    }
 	    else {
 		print_message(14,"Not yet implemented");
 	    }
@@ -861,22 +919,28 @@ void hit_button_at_curpos(int curpos)
 	    define_digits();
 	    update_lcd();
 	    break;
-	case 26: // ENTER
+	case 26: // ENTER --> ensure identical code for case 36, still ENTER
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
-	    push_stack();
-	    if (second_f==false) enter_hit = true;
+	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_by_exp();
+		push_stack();
+		enter_hit = true;
+	    }
 	    else {
+		push_stack();
 		stack[0] = lastx;
 		second_f = false;
 		func_hit = true;
 	    }
+	    define_digits();
 	    update_lcd();
 	    break;
 	case 27: // 1
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(1); 
 		else if (recall_hit==true) recall_memory(1); 
+		else if (stackx_exp_hit==true) add_number_exp(1);
 		else add_number(1.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -887,6 +951,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(2); 
 		else if (recall_hit==true) recall_memory(2); 
+		else if (stackx_exp_hit==true) add_number_exp(2);
 		else add_number(2.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -897,6 +962,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) { 
 		if (store_hit==true) store_memory(3); 
 		else if (recall_hit==true) recall_memory(3); 
+		else if (stackx_exp_hit==true) add_number_exp(3);
 		else add_number(3.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -906,7 +972,8 @@ void hit_button_at_curpos(int curpos)
 	case 30: // -
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
-	    if (second_f==false) { 
+	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_by_exp(); 
 		lastx = stack[0]; 
 		stack[0] = stack[1]-stack[0];
 		pull_stack();
@@ -926,6 +993,7 @@ void hit_button_at_curpos(int curpos)
 	    break;
 	case 34: // STO
 	    if (second_f==false) { 
+		if (stackx_exp_hit==true) stackx_by_exp();
 		if (store_hit==false) {
 		    store_hit = true;
 		    if (recall_hit) recall_hit = false;
@@ -938,6 +1006,7 @@ void hit_button_at_curpos(int curpos)
 	    break;
 	case 35: // RCL
 	    if (second_f==false) { 
+		if (stackx_exp_hit==true) stackx_by_exp();
 		if (recall_hit==false) {
 		    recall_hit = true;
 		    if (store_hit) store_hit = false;
@@ -948,12 +1017,16 @@ void hit_button_at_curpos(int curpos)
 	    } 
 	    update_lcd();
 	    break;
-	case 36: // ENTER
+	case 36: // ENTER --> ensure identical code for case 26, still ENTER
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
-	    push_stack();
-	    if (second_f==false) enter_hit = true;
+	    if (second_f==false) {
+		if (stackx_exp_hit==true) stackx_by_exp();
+		push_stack();
+		enter_hit = true;
+	    }
 	    else {
+		push_stack();
 		stack[0] = lastx;
 		second_f = false;
 		func_hit = true;
@@ -965,6 +1038,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) { 
 		if (store_hit==true) store_memory(0); 
 		else if (recall_hit==true) recall_memory(0); 
+		else if (stackx_exp_hit==true) add_number_exp(0);
 		else add_number(0.0);
 	    } else {
 		print_message(14,"Not yet implemented");
@@ -975,6 +1049,7 @@ void hit_button_at_curpos(int curpos)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) { 
+		if (stackx_exp_hit==true) stackx_exp_hit = false;
 		if (enter_hit) {
 		    stack[0] = 0.0;
 		    stackx_digit = 1;
@@ -999,6 +1074,7 @@ void hit_button_at_curpos(int curpos)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) { 
+		if (stackx_exp_hit==true) stackx_by_exp();
 		lastx = stack[0]; 
 		stack[0] = stack[1]+stack[0];
 		pull_stack();
@@ -1036,7 +1112,8 @@ void show_help(int curpos)   // HELP window if H is pressed
     _outtext("  T --> roTaTe stack R\031    K --> toggle show stack    \n");
     _outtext("  L --> recall last X      M --> show registers       \n");
     _outtext("  S --> STOre in register  R --> ReCaLl from register \n"); 
-    _outtext("  P --> \343                  F --> second function     \n\n");
+    _outtext("  P --> \343                  F --> second function     \n");
+    _outtext("  E --> EEX add 10^ exp.                              \n"); 
     _outtext("     Not all functions have been implemented yet      \n");
 
     getch();
@@ -1117,6 +1194,10 @@ void main_loop()  // this is the main loop tracking the key pressed by the user
 	    case 77: // RIGHT
 		curpos = update_curpos("right",curpos);
 		continue;
+	    case 101: // e for EEX
+		second_f = false;
+		hit_button_at_curpos(16);
+		continue;
 	    case 102: // f for SECOND FUNCTION
 		hit_button_at_curpos(32);
 		continue;
@@ -1175,4 +1256,3 @@ void main()
 
     closure_steps();    // return to default video mode
 }
-
