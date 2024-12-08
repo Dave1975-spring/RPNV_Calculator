@@ -320,8 +320,10 @@ void define_digits()
 {
     char text_stackx[35];
     int i;
+    int tmp_dec_digit = 0; // tmp_dec_digit track potential digits, to be confirmed
     char c;
     bool point = false; // track if a dot has been found in the string
+    bool dec_digit = false; // track if decimal digit <> 0 has been found
 
     if ((fabs(stack[0])>1.0E12) || (fabs(stack[0])<1.0E-12)) sprintf(text_stackx,"%1.*E",MAXDIGITS,stack[0]);
     else sprintf(text_stackx,"%*.*f",(MAXDIGITS*2+1),MAXDIGITS,stack[0]); 
@@ -331,10 +333,18 @@ void define_digits()
 
     for (i=0; i<strlen(text_stackx); i++) {
 	c = text_stackx[i];
-	if (c>=49 && c<=57) stackx_digit++;
-	if (c>=49 && c<=57 && point) stackx_dec_digit++;
-	if (c=='.') point = true; 
+	if (point==false) {     // counts the digits before the dot
+	    if (c>=49 && c<=57) stackx_digit++;
+	    if (c=='.') point = true;
+	    if (stackx_digit==MAXDIGITS) break; 
+	} else {        // counts the digits after the dot, excluding the last zeros
+	    if (c>=48 && c<=57) tmp_dec_digit++;
+	    if (c>=49 && c<=57) stackx_dec_digit = tmp_dec_digit;
+	    if (c=='E') break;
+	    if ((stackx_digit+tmp_dec_digit)==MAXDIGITS) break;
+	}
     }
+    stackx_digit = stackx_digit + stackx_dec_digit;
 
     if (stackx_digit==0) stackx_digit = 1; // in case of 0.0 at least 1 digits
 }
@@ -350,7 +360,7 @@ void update_lcd()
 	if (stackx_dec) sprintf(text_lcd,"%#1.*Lf",stackx_dec_digit,stack[0]);
 	else sprintf(text_lcd,"%1.*Lf",stackx_dec_digit,stack[0]);
     }
-    else sprintf(text_lcd,"%1.*E",stackx_digit,stack[0]);
+    else sprintf(text_lcd,"%1.*E",stackx_dec_digit,stack[0]);
 
     _setbkcolor(3);
     _settextcolor(0);
@@ -378,7 +388,7 @@ void update_lcd()
 
     if (stackx_exp_hit==true) {
 	_settextposition(2,21);
-	sprintf(text_exp,"E%+03i",stackx_exp);
+	sprintf(text_exp,"E%+04i",stackx_exp);
 	_outtext(text_exp);
     }
 
@@ -543,6 +553,12 @@ void recall_memory(int mempos)
     func_hit = true;
 }
 
+void clear_memory()
+{
+    int i;
+    for (i=0; i<10; i++) memory[i] = 0.0;
+}
+
 void stackx_by_exp()
 {
     int i;
@@ -554,11 +570,11 @@ void stackx_by_exp()
     stackx_exp_hit = false;
 }
 
-void add_number_exp(int num) // move the unit to tens and add a new unit 
+void add_number_exp(int num) // move the unit to tens, tens to hundreds and add a new unit 
 {
     int buf;
-    buf = (int)(stackx_exp/10); // get the tens
-    stackx_exp = (stackx_exp - buf*10) * 10 + num; // subtract the tens and add the unit
+    buf = (int)(stackx_exp/100); // get the hundreds
+    stackx_exp = (stackx_exp - buf*100) * 10 + num; // subtract the hundreds and add the unit
 }
 
 void add_number(double num)
@@ -705,6 +721,7 @@ void hit_button_at_curpos(int curpos)
 		else stack[0] = stack[0] * -1.0;
 	    }
 	    else {
+		push_stack();
 		stack[0] = M_PI;
 		func_hit = true;
 		second_f = false;
@@ -893,7 +910,7 @@ void hit_button_at_curpos(int curpos)
 	    define_digits();
 	    update_lcd();
 	    break;
-	case 24: // x<>y /
+	case 24: // x<>y / clear Registers 0-9
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -901,7 +918,8 @@ void hit_button_at_curpos(int curpos)
 		swap_stackxy();
 	    }
 	    else {
-		print_message(14,"Not yet implemented");
+		clear_memory();
+		second_f = false;
 	    }
 	    define_digits();
 	    update_lcd();
@@ -919,7 +937,7 @@ void hit_button_at_curpos(int curpos)
 	    define_digits();
 	    update_lcd();
 	    break;
-	case 26: // ENTER --> ensure identical code for case 36, still ENTER
+	case 26: // ENTER / LastX --> ensure identical code for case 36, still ENTER
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -1017,7 +1035,7 @@ void hit_button_at_curpos(int curpos)
 	    } 
 	    update_lcd();
 	    break;
-	case 36: // ENTER --> ensure identical code for case 26, still ENTER
+	case 36: // ENTER / LastX --> ensure identical code for case 26, still ENTER
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -1099,7 +1117,7 @@ void show_help(int curpos)   // HELP window if H is pressed
     _clearscreen(_GWINDOW); 
 
     _settextposition(2,1);
-    _outtext(" RPNV 0.2.1 is an RPN calc inspired by HP Voyager calc\n");
+    _outtext(" RPNV 0.3.2 is an RPN calc inspired by HP Voyager calc\n");
     _outtext("        Made for fun by Davide Erbetta in 2024        \n"); 
     _outtext(" Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
     _outtext("    ----------------------------------------------    \n");
