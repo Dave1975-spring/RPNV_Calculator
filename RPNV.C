@@ -1,26 +1,26 @@
-/* 
-MIT License
-
-Copyright (c) 2024 Davide Erbetta
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Davide Erbetta
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 #include <stdio.h>
 #include <conio.h>
@@ -43,6 +43,8 @@ int stackx_digit = 0;  // total number of digits in stack X
 int stackx_dec_digit = 0; // number of decimal digits in stack X
 int stackx_exp = 0; // 10^ exponent of stackx value
 int stackx_exp_digit = 0; // numer of digit inserted in stackx_exp
+int ang_mode = 0;
+char ang_mode_txt[3][4] = {"DEG","RAD","GRD"};
 bool stackx_dec = false; // true = decimal number ; false = integer
 bool stackx_exp_hit = false; // track if EEX button has been just pressed
 bool enter_hit = false; // track if ENTER has been just hit
@@ -407,8 +409,10 @@ void update_lcd()
     if (recall_hit==false) _outtext("   ");
     else _outtext("RCL"); 
 
+    // display angular mode
+
     _settextposition(3,13);
-    _outtext("RAD");     // by now only rad mode implemented
+    _outtext(ang_mode_txt[ang_mode]); 
 
     if (stackx_exp_hit==true) {
 	_settextposition(2,21);
@@ -581,6 +585,24 @@ void clear_memory()
 {
     int i;
     for (i=0; i<10; i++) memory[i] = 0.0;
+}
+
+void convert_ang()
+{
+    switch (ang_mode) {
+	case 0: stack[0] = stack[0] * M_PI / 180.0; break;
+	case 1: break;
+	case 2: stack[0] = stack[0] * M_PI / 200.0; break;
+    }
+}
+
+void back_convert_ang()
+{
+    switch (ang_mode) {
+	case 0: stack[0] = stack[0] / M_PI * 180.0; break;
+	case 1: break;
+	case 2: stack[0] = stack[0] / M_PI * 200.0; break;
+    }
 }
 
 void stackx_by_exp()
@@ -802,18 +824,42 @@ void hit_button_at_curpos(int curpos)
 	    define_digits(); 
 	    update_lcd(); 
 	    break;
+	case 11: // % / 
+	    if (store_hit) store_hit = false; 
+	    if (recall_hit) recall_hit = false;
+	    if (second_f==false) {
+		// if (stackx_exp_hit==true) stackx_by_exp();
+		lastx = stack[0];
+		stack[0] = stack[1]/100.0*stack[0];
+		pull_stack();
+		func_hit = true;
+	    } else {
+		print_message(14,"Not yet implemented");
+	    } 
+	    define_digits(); 
+	    update_lcd(); 
+	    break;
 	case 13: // SIN / ASIN
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (stackx_exp_hit==true) stackx_by_exp();
-	    lastx = stack[0];
-	    if (second_f == false) stack[0] = sin(stack[0]);
-	    else {
-		stack[0] = asin(stack[0]);
-		second_f = false;
+	    if (second_f == false) {
+		lastx = stack[0];
+		convert_ang();
+		stack[0] = sin(stack[0]);
+		pull_stack();
+		func_hit = true;
 	    }
-	    pull_stack();
-	    func_hit = true;
+	    else {
+		if ((stack[0]>=-1.0 && stack[0]<=1.0)) {
+		    lastx = stack[0];
+		    stack[0] = asin(stack[0]);
+		    back_convert_ang();
+		    pull_stack();
+		    func_hit = true;
+		    second_f = false;
+		} else print_message(6,"number outside function domain");
+	    }
 	    define_digits();
 	    update_lcd();
 	    break;
@@ -821,14 +867,23 @@ void hit_button_at_curpos(int curpos)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false;
 	    if (stackx_exp_hit==true) stackx_by_exp();
-	    lastx = stack[0];
-	    if (second_f == false) stack[0] = cos(stack[0]);
-	    else {
-		stack[0] = acos(stack[0]);
-		second_f = false;
+	    if (second_f == false) {
+		lastx = stack[0];
+		convert_ang();
+		stack[0] = cos(stack[0]);
+		pull_stack();
+		func_hit = true;
 	    }
-	    pull_stack();
-	    func_hit = true;
+	    else {
+		if ((stack[0]>=-1.0 && stack[0]<=1.0)) { 
+		lastx = stack[0];
+		    stack[0] = acos(stack[0]);
+		    back_convert_ang(); 
+		    pull_stack();
+		    func_hit = true;
+		    second_f = false;
+		} else print_message(6,"number outside function domain"); 
+	    }
 	    define_digits();
 	    update_lcd();
 	    break;
@@ -837,9 +892,13 @@ void hit_button_at_curpos(int curpos)
 	    if (recall_hit) recall_hit = false; 
 	    if (stackx_exp_hit==true) stackx_by_exp();
 	    lastx = stack[0];
-	    if (second_f == false) stack[0] = tan(stack[0]);
+	    if (second_f == false) {
+		convert_ang();
+		stack[0] = tan(stack[0]);
+	    }
 	    else {
 		stack[0] = atan(stack[0]);
+		back_convert_ang(); 
 		second_f = false;
 	    }
 	    pull_stack();
@@ -873,36 +932,39 @@ void hit_button_at_curpos(int curpos)
 	    define_digits();
 	    update_lcd();
 	    break; 
-	case 17: // 4
+	case 17: // 4 / DEG
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(4); 
 		else if (recall_hit==true) recall_memory(4); 
 		else if (stackx_exp_hit==true) add_number_exp(4);
 		else add_number(4.0);
 	    } else {
-		print_message(14,"Not yet implemented");
+		ang_mode = 0;
+		second_f = false;
 	    } 
 	    update_lcd();
 	    break;
-	case 18: // 5
+	case 18: // 5 / RAD
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(5); 
 		else if (recall_hit==true) recall_memory(5); 
 		else if (stackx_exp_hit==true) add_number_exp(5);
 		else add_number(5.0);
 	    } else {
-		print_message(14,"Not yet implemented");
+		ang_mode = 1;
+		second_f = false;
 	    } 
 	    update_lcd();
 	    break;
-	case 19: // 6
+	case 19: // 6 / GRD
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(6); 
 		else if (recall_hit==true) recall_memory(6); 
 		else if (stackx_exp_hit==true) add_number_exp(6);
 		else add_number(6.0);
 	    } else {
-		print_message(14,"Not yet implemented");
+		ang_mode = 2;
+		second_f = false;
 	    } 
 	    update_lcd();
 	    break;
@@ -1033,7 +1095,7 @@ void hit_button_at_curpos(int curpos)
 	    else second_f = false;
 	    update_lcd();
 	    break;
-	case 34: // STO
+	case 34: // STO / INT
 	    if (second_f==false) { 
 		if (stackx_exp_hit==true) stackx_by_exp();
 		if (store_hit==false) {
@@ -1042,11 +1104,15 @@ void hit_button_at_curpos(int curpos)
 		    if (second_f) second_f = false;
 		} else store_hit = false;
 	    } else {
-		print_message(14,"Not yet implemented");
+		lastx = stack[0];
+		stack[0] = (int)stack[0];
+		second_f = false;
+		func_hit = true;
+		define_digits(); 
 	    } 
 	    update_lcd();
 	    break;
-	case 35: // RCL
+	case 35: // RCL / FRAC
 	    if (second_f==false) { 
 		if (stackx_exp_hit==true) stackx_by_exp();
 		if (recall_hit==false) {
@@ -1055,7 +1121,11 @@ void hit_button_at_curpos(int curpos)
 		    if (second_f) second_f = false;
 		} else recall_hit = false;
 	    } else {
-		print_message(14,"Not yet implemented");
+		lastx = stack[0];
+		stack[0] = stack[0] - (int)stack[0];
+		second_f = false;
+		func_hit = true;
+		define_digits(); 
 	    } 
 	    update_lcd();
 	    break;
@@ -1141,7 +1211,7 @@ void show_help(int curpos)   // HELP window if H is pressed
     _clearscreen(_GWINDOW); 
 
     _settextposition(2,1);
-    _outtext(" RPNV 0.3.2 is an RPN calc inspired by HP Voyager calc\n");
+    _outtext(" RPNV 0.4.2 is an RPN calc inspired by HP Voyager calc\n");
     _outtext("        Made for fun by Davide Erbetta in 2024        \n"); 
     _outtext(" Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
     _outtext("    ----------------------------------------------    \n");
