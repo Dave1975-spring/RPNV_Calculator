@@ -22,12 +22,14 @@
  * SOFTWARE.
  */
 
+
 #include <stdio.h>
 #include <conio.h>
 #include <graph.h>
 #include <math.h>
 #include <stdbool.h>
 #include <string.h>
+#include <i86.h>
 
 #define offset_col 7
 #define offset_row 8
@@ -39,12 +41,13 @@
 double stack[4] = {0.0,0.0,0.0,0.0}; // stack>: X,Y,Z,T registers
 double lastx = 0.0; // last x register
 double memory[10] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; // memory 
+int ang_mode = 0;
+char ang_mode_txt[3][4] = {"DEG","RAD","GRD"};
+int curpos = 26;  // track the cursor position, moved by arrow keys
 int stackx_digit = 0;  // total number of digits in stack X
 int stackx_dec_digit = 0; // number of decimal digits in stack X
 int stackx_exp = 0; // 10^ exponent of stackx value
 int stackx_exp_digit = 0; // numer of digit inserted in stackx_exp
-int ang_mode = 0;
-char ang_mode_txt[3][4] = {"DEG","RAD","GRD"};
 bool stackx_dec = false; // true = decimal number ; false = integer
 bool stackx_exp_hit = false; // track if EEX button has been just pressed
 bool enter_hit = false; // track if ENTER has been just hit
@@ -92,7 +95,6 @@ void draw_border()
 	_settextposition(row,78);
 	_outtext("\263");
     } 
-
 
     for (col=4; col<78; col++)
     {
@@ -432,7 +434,7 @@ double factorial_int(double number)
     return number;
 }
 
-int update_curpos(char *dir,int curpos)
+void update_curpos(char *dir)
 {
     char *testo;
     int cur_row,cur_col;
@@ -493,7 +495,7 @@ int update_curpos(char *dir,int curpos)
     _settextposition(2,1);
     _outtext("\021"); 
 
-    return curpos; 
+    //return curpos; 
 }
 
 void clear_full_stack() // clear the screen where the stack is shown
@@ -535,7 +537,7 @@ void swap_stackxy()
     stack[1] = buf;
 }
 
-void show_memory(int curpos)  // show the registers content
+void show_memory()  // show the registers content
 {
     int i=0;
     char text_memory[28];
@@ -561,7 +563,7 @@ void show_memory(int curpos)  // show the registers content
 
     getch();
     init_calc_screen();
-    update_curpos("",curpos);
+    update_curpos("");
     update_lcd();
 }
 
@@ -587,6 +589,18 @@ void clear_memory()
     for (i=0; i<10; i++) memory[i] = 0.0;
 }
 
+void stackx_by_exp()
+{
+    int i;
+
+    if (stackx_exp>0) for (i=1 ; i<= stackx_exp; i++) stack[0] = stack[0] * 10.0;
+    if (stackx_exp<0) for (i=-1 ; i>= stackx_exp; i--) stack[0] = stack[0] / 10.0;
+
+    stackx_exp = 0;
+    stackx_exp_hit = false;
+}
+
+
 void convert_ang()
 {
     switch (ang_mode) {
@@ -603,17 +617,6 @@ void back_convert_ang()
 	case 1: break;
 	case 2: stack[0] = stack[0] / M_PI * 200.0; break;
     }
-}
-
-void stackx_by_exp()
-{
-    int i;
-
-    if (stackx_exp>0) for (i=1 ; i<= stackx_exp; i++) stack[0] = stack[0] * 10.0;
-    if (stackx_exp<0) for (i=-1 ; i>= stackx_exp; i--) stack[0] = stack[0] / 10.0;
-
-    stackx_exp = 0;
-    stackx_exp_hit = false;
 }
 
 void add_number_exp(int num) // move the unit to tens, tens to hundreds and add a new unit 
@@ -828,7 +831,6 @@ void hit_button_at_curpos(int curpos)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false;
 	    if (second_f==false) {
-		// if (stackx_exp_hit==true) stackx_by_exp();
 		lastx = stack[0];
 		stack[0] = stack[1]/100.0*stack[0];
 		pull_stack();
@@ -1203,7 +1205,7 @@ void hit_button_at_curpos(int curpos)
     }
 }
 
-void show_help(int curpos)   // HELP window if H is pressed
+void show_help()   // HELP window if H is pressed
 {
     _settextwindow(2,13,23,68);
     _setbkcolor(5);
@@ -1211,7 +1213,7 @@ void show_help(int curpos)   // HELP window if H is pressed
     _clearscreen(_GWINDOW); 
 
     _settextposition(2,1);
-    _outtext(" RPNV 0.4.2 is an RPN calc inspired by HP Voyager calc\n");
+    _outtext(" RPNV 0.5.2 is an RPN calc inspired by HP Voyager calc\n");
     _outtext("        Made for fun by Davide Erbetta in 2024        \n"); 
     _outtext(" Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
     _outtext("    ----------------------------------------------    \n");
@@ -1230,92 +1232,174 @@ void show_help(int curpos)   // HELP window if H is pressed
 
     getch();
     init_calc_screen();
-    update_curpos("",curpos);
+    update_curpos("");
     update_lcd();
 }
 
-void main_loop()  // this is the main loop tracking the key pressed by the user
+int init_mouse()
+{
+    union REGS reg;
+    reg.x.ax = 0x00;
+    int86( 0x33, &reg, &reg);
+
+    return 0xFFFF == reg.x.ax;
+}
+
+void show_mouse()
+{
+    union REGS reg;
+    reg.x.ax = 0x01;
+    int86( 0x33, &reg, &reg);
+}
+
+void get_mouse( int *x, int *y, int *left, int*right )
+{
+    union REGS reg;
+    reg.x.ax = 0x03;
+    int86( 0x33, &reg, &reg);
+    *x = reg.x.cx / 8 + 1;
+    *y = reg.x.dx / 8 + 1;
+    *left = reg.x.bx & 0x1;
+    *right = reg.x.bx & 0x2;
+}
+
+int mouse_position(int mouse_x, int mouse_y)
+{
+    int mouse_pos;
+    int mouse_row = -100;  // if position does not match with any button row or 
+    int mouse_col = -100;  // column then mouse_pos will be negative
+
+    // translate mouse coordinates (1 to 25 rows) in buttons coordinates
+    // if directly the 2nd function is clicked, then set true the second_f flag
+
+    if ((mouse_y >=  8) && (mouse_y <= 10)) mouse_row = 0;
+    if  (mouse_y == 8) second_f = true;
+
+    if ((mouse_y >= 12) && (mouse_y <= 14)) mouse_row = 1;
+    if  (mouse_y == 12) second_f = true;
+
+    if ((mouse_y >= 16) && (mouse_y <= 18)) mouse_row = 2;
+    if  (mouse_y == 16) second_f = true;
+
+    if ((mouse_y >= 20) && (mouse_y <= 22)) mouse_row = 3;
+    if  (mouse_y == 20) second_f = true;
+
+    // translate mouse coordinates (1 to 80 columns) in buttons coordinates
+
+    if ((mouse_x >=  7) && (mouse_x <= 11)) mouse_col = 1; 
+    if ((mouse_x >= 14) && (mouse_x <= 18)) mouse_col = 2; 
+    if ((mouse_x >= 21) && (mouse_x <= 25)) mouse_col = 3; 
+    if ((mouse_x >= 28) && (mouse_x <= 32)) mouse_col = 4; 
+    if ((mouse_x >= 35) && (mouse_x <= 39)) mouse_col = 5; 
+    if ((mouse_x >= 42) && (mouse_x <= 46)) mouse_col = 6; 
+    if ((mouse_x >= 49) && (mouse_x <= 53)) mouse_col = 7; 
+    if ((mouse_x >= 56) && (mouse_x <= 60)) mouse_col = 8; 
+    if ((mouse_x >= 63) && (mouse_x <= 67)) mouse_col = 9; 
+    if ((mouse_x >= 70) && (mouse_x <= 74)) mouse_col = 10; 
+
+    mouse_pos = mouse_row * 10 + mouse_col;
+
+    if (mouse_pos < 0) mouse_pos = 0; // if negative, so no button, then set to zero;
+    if (mouse_pos == 36) second_f = false; // no second function for buttons 36
+
+    return mouse_pos;
+}
+
+int main_loop()  // this is the main loop tracking the key pressed by the user
 {
     int c = 0;
-    int curpos = 26;
+    int mouse_x,mouse_y,mouse_left,mouse_right;
+    char mouse_text[30];
 
-    while (c!=27) {
+    get_mouse(&mouse_x,&mouse_y,&mouse_left,&mouse_right);
+
+    if (mouse_left) {
+	hit_button_at_curpos(mouse_position(mouse_x,mouse_y));
+	delay(250);  // give sum time to unpress the mouse button ...
+    }
+
+    if (kbhit()) {
 	c = getch();
-
-	switch (c) {
+	if ( c ==(char)0 ) {    // if special keys are pressed, as arrows
+	    c = getch();
+	    switch (c) {
+		case 72: // UP
+		    update_curpos("up");
+		    break;
+		case 80: // DOWN
+		    update_curpos("down");
+		    break;
+		case 75: // LEFT
+		    update_curpos("left");
+		    break;
+		case 77: // RIGHT
+		    update_curpos("right");
+		    break; 
+	    } 
+	} else switch (c) {
 	    case 13: // ENTER
 		hit_button_at_curpos(26);
-		continue; 
+		break; 
+	    case 27: // !!! ESC !!!
+		return -1;
 	    case 32: // SPACE
 		hit_button_at_curpos(curpos);
-		continue;
+		break;
 	    case 42: // *
 		hit_button_at_curpos(20);
-		continue;
+		break;
 	    case 43: // +
 		hit_button_at_curpos(40);
-		continue;
+		break;
 	    case 45: // -
 		hit_button_at_curpos(30);
-		continue;
+		break;
 	    case 46: // .
 		hit_button_at_curpos(38);
-		continue;
+		break;
 	    case 47: // /
 		hit_button_at_curpos(10);
-		continue;
+		break;
 	    case 48: // 0
 		hit_button_at_curpos(37);
-		continue; 
+		break;
 	    case 49: // 1
 		hit_button_at_curpos(27);
-		continue; 
+		break;
 	    case 50: // 2
 		hit_button_at_curpos(28);
-		continue; 
+		break;
 	    case 51: // 3
 		hit_button_at_curpos(29);
-		continue;
+		break;
 	    case 52: // 4
 		hit_button_at_curpos(17);
-		continue;
+		break;
 	    case 53: // 5
 		hit_button_at_curpos(18);
-		continue;
+		break;
 	    case 54: // 6
 		hit_button_at_curpos(19);
-		continue; 
+		break;
 	    case 55: // 7
 		hit_button_at_curpos(7);
-		continue; 
+		break;
 	    case 56: // 8
 		hit_button_at_curpos(8); 
-		continue; 
+		break;
 	    case 57: // 9
 		hit_button_at_curpos(9); 
-		continue; 
-	    case 72: // UP
-		curpos = update_curpos("up",curpos);
-		continue;
-	    case 80: // DOWN
-		curpos = update_curpos("down",curpos);
-		continue;
-	    case 75: // LEFT
-		curpos = update_curpos("left",curpos);
-		continue;
-	    case 77: // RIGHT
-		curpos = update_curpos("right",curpos);
-		continue;
+		break;
 	    case 101: // e for EEX
 		second_f = false;
 		hit_button_at_curpos(16);
-		continue;
+		break;
 	    case 102: // f for SECOND FUNCTION
 		hit_button_at_curpos(32);
-		continue;
+		break;
 	    case 104: // h for HELP
-		show_help(curpos);
-		continue;
+		show_help();
+		break;
 	    case 107: // k for STACK
 		if (show_stack==false) {
 		    show_stack = true;
@@ -1324,47 +1408,56 @@ void main_loop()  // this is the main loop tracking the key pressed by the user
 		    show_stack = false;
 		    clear_full_stack();
 		}
-		continue;
+		break;
 	    case 108: // l for LAST X
 		second_f = true;
 		hit_button_at_curpos(26);
-		continue;
+		break;
 	    case 109: // m for show memory registers
-		show_memory(curpos); 
-		continue;
+		show_memory(); 
+		break;
 	    case 112: // p for PI
 		second_f = true;
 		hit_button_at_curpos(6);
-		continue; 
+		break;
 	    case 114: // R for RCL 
 		second_f = false;
 		hit_button_at_curpos(35);
-		continue;
+		break;
 	    case 115: // S for STO
 		second_f = false;
 		hit_button_at_curpos(34);
-		continue;
+		break;
 	    case 116: // T for R|v , roTaTe stack
 		second_f = false;
 		hit_button_at_curpos(23);
-		continue;
+		break;
+	    default:
+		return 0;
 	}
     }
+    return 0;
 }
 
 void main()
 {
+    int result = 0;
+
     initial_steps();    // set video mode
 
     init_calc_screen(); // draw the calculator layout
 
-    update_curpos("",26);   // move button cursor to defaul position - ENTER key
+    init_mouse();
+
+    show_mouse();
+
+    update_curpos("");   // move button cursor to defaul position - ENTER key
 
     update_lcd();       // update the lcd screen with starting value
 
     print_message(10,"ESC to exit - H for HELP"); 
 
-    main_loop();        // main calc loop
+    while (result >= 0) result = main_loop();        // main calc loop
 
     closure_steps();    // return to default video mode
 }
