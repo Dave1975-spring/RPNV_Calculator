@@ -17,8 +17,7 @@ The calculator has a 4 level stack (X,Y,Z,T registers), the Last-X register and 
 
 ### HOW IT WORKS:
 
-Use the arrow keys to move the cursor on the desired button then hit SPACE bar to push the button. All the implemented functions can be used in this way.
-Some functions has a keyboard shortcut:
+Use the arrow keys to move the cursor on the desired button then hit SPACE bar to push the button. All the implemented functions can be used in this way. Mouse is also supported. Some functions has a keyboard shortcut:
 - all numbers can be used
 - all the four basic operation: + - * /
 - the ENTER key works as the ENTER button on the calculator
