@@ -20,8 +20,16 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ ****************************************************************************
+ *
+ * Special thanks to:
+ * - FreeDOS development team
+ * - Jim Hall for his great tutorials on C and CONIO
+ * - Shawn Hargreaves for his great FED text editor
+ * - "root42" for his very usefull MS-DOS programming tutorial
+ *
  */
-
 
 #include <stdio.h>
 #include <conio.h>
@@ -43,6 +51,9 @@ double lastx = 0.0; // last x register
 double memory[10] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; // memory 
 int ang_mode = 0;
 char ang_mode_txt[3][4] = {"DEG","RAD","GRD"};
+int disp_mode = 0;
+int disp_mode_dec_digit = 9; // track how many decimal digits for DISP mode selected
+char disp_mode_txt[3][4] = {"FIX","SCI","ENG"};
 int curpos = 26;  // track the cursor position, moved by arrow keys
 int stackx_digit = 0;  // total number of digits in stack X
 int stackx_dec_digit = 0; // number of decimal digits in stack X
@@ -54,6 +65,8 @@ bool enter_hit = false; // track if ENTER has been just hit
 bool func_hit = false; // track if a standard function key has been just hit
 bool store_hit = false; // track if the STO button has been just hit
 bool recall_hit = false; // track if the RCL button has been just hit
+bool disp_mode_hit = false; // track if FIX or SCI or ENG has been just hit
+bool number_hit = false; // track if a number has been just hit
 bool second_f = false; // track if f second function button has been just hit
 bool show_stack = false; // track if the stack has to be show when LCD is updated
 
@@ -277,7 +290,7 @@ void init_calc_screen()
 
     // draw 4th row
 
-    draw_std_button(4,1,""," ON","");
+    draw_std_button(4,1," HELP"," ON","");
     draw_f_button();
     draw_std_button(4,3," MEM"," P/R","");
     draw_std_button(4,4," INT"," STO","");
@@ -377,52 +390,110 @@ void define_digits()
     if (stackx_digit==0) stackx_digit = 1; // in case of 0.0 at least 1 digits
 }
 
-void update_lcd()
+void update_lcd_badge()
 {
-    char text_lcd[25];
-    char text_exp[5];
-
-    // create the string to be shown in LCD
-
-    if ( ((fabs(stack[0])<1.0E12) && (fabs(stack[0])>1.0E-12)) || (stack[0]==0.0) ) {
-	if (stackx_dec) sprintf(text_lcd,"%#1.*Lf",stackx_dec_digit,stack[0]);
-	else sprintf(text_lcd,"%1.*Lf",stackx_dec_digit,stack[0]);
-    }
-    else sprintf(text_lcd,"%1.*E",stackx_dec_digit,stack[0]);
-
     _setbkcolor(3);
     _settextcolor(0);
-    _settextwindow(3,15,5,42);
+    _settextwindow(5,15,5,42);
     _clearscreen(_GWINDOW);
-    _settextposition(2,4); 
-    _outtext(text_lcd);
 
-    // show badges as f-function, STO, RCL, RAD, etc.
+    // show badges as f-function, STO, RCL, RAD, etc. in LCD area
 
-    _settextposition(3,3);
+    _settextposition(1,3);
     if (second_f==false) _outtext(" ");
     else _outtext("f"); 
 
-    _settextposition(3,5);
+    _settextposition(1,5);
     if (store_hit==false) _outtext("   ");
     else _outtext("STO"); 
 
-    _settextposition(3,9);
+    _settextposition(1,9);
     if (recall_hit==false) _outtext("   ");
     else _outtext("RCL"); 
 
     // display angular mode
 
-    _settextposition(3,13);
+    _settextposition(1,13);
     _outtext(ang_mode_txt[ang_mode]); 
 
-    if (stackx_exp_hit==true) {
-	_settextposition(2,21);
-	sprintf(text_exp,"E%+04i",stackx_exp);
-	_outtext(text_exp);
+    // display DISP mode
+
+    _settextposition(1,19);
+    _outtext(disp_mode_txt[disp_mode]); 
+}
+
+void update_lcd()
+{
+    char text_lcd[25];  // text to display the number
+    char text_exp[5];   // text to display the exponential entry if EEX is pressed
+    float mantissa;
+    int counter = 0;
+
+    // set the LCD area to be filled
+
+    _setbkcolor(3);
+    _settextcolor(0);
+    _settextwindow(3,15,4,42);
+    _clearscreen(_GWINDOW);
+    _settextposition(2,4); 
+
+    // create the string to be shown in LCD
+
+    if ((number_hit) || (stackx_exp_hit)) {
+	if (stackx_dec) sprintf(text_lcd,"%#1.*Lf",stackx_dec_digit,stack[0]);
+	else sprintf(text_lcd,"%1.*Lf",stackx_dec_digit,stack[0]);
+	number_hit = false;
+	_outtext(text_lcd);
+
+	// display entry for exponenent if EEX has been pressed
+
+	if (stackx_exp_hit) {
+	    _settextposition(2,21);
+	    sprintf(text_exp,"E%+04i",stackx_exp);
+	    _outtext(text_exp);
+	}
+    } 
+    else {
+	switch (disp_mode) {
+	    case 0:     // FIX
+		if ( ((fabs(stack[0])<1.0E12) && (fabs(stack[0])>1.0E-12)) || (stack[0]==0.0) ) {
+		    if (stackx_dec) sprintf(text_lcd,"%#1.*Lf",disp_mode_dec_digit,stack[0]);
+		    else sprintf(text_lcd,"%1.*Lf",disp_mode_dec_digit,stack[0]);
+		}
+		else sprintf(text_lcd,"%1.*E",disp_mode_dec_digit,stack[0]);
+		break;
+	    case 1:     // SCI
+		sprintf(text_lcd,"%1.*E",disp_mode_dec_digit,stack[0]);
+		break;
+	    case 2:     // ENG
+		mantissa = stack[0];
+		if (fabs(mantissa) > 1.0) {
+		    while (mantissa > 1.0E3) {
+			mantissa = mantissa / 1.0E3;
+			counter++;
+		    }
+		} else {
+		    while (mantissa < 1.0) {
+			mantissa = mantissa * 1E3;
+			counter--;
+		    }
+		}
+		sprintf(text_lcd,"%1.*LfE%03i",disp_mode_dec_digit,mantissa,(counter*3));
+		break;
+	    default:    // Standard
+		if ( ((fabs(stack[0])<1.0E12) && (fabs(stack[0])>1.0E-12)) || (stack[0]==0.0) ) {
+		    if (stackx_dec) sprintf(text_lcd,"%#1.*Lf",stackx_dec_digit,stack[0]);
+		    else sprintf(text_lcd,"%1.*Lf",stackx_dec_digit,stack[0]);
+		}
+		else sprintf(text_lcd,"%1.*E",stackx_dec_digit,stack[0]);
+		break;
+	}
+	_outtext(text_lcd);
     }
 
-    if (show_stack) show_full_stack();
+    update_lcd_badge(); // call function to update badge area
+
+    if (show_stack) show_full_stack(); // show the stack + Last-x stack if requested
 }
 
 double factorial_int(double number)
@@ -600,7 +671,6 @@ void stackx_by_exp()
     stackx_exp_hit = false;
 }
 
-
 void convert_ang()
 {
     switch (ang_mode) {
@@ -617,6 +687,13 @@ void back_convert_ang()
 	case 1: break;
 	case 2: stack[0] = stack[0] / M_PI * 200.0; break;
     }
+}
+
+void get_disp_mode_dec_digit()
+{
+    char c = 0;
+    while (c<48 || c>57) c = getch();
+    disp_mode_dec_digit = (int)c - 48;
 }
 
 void add_number_exp(int num) // move the unit to tens, tens to hundreds and add a new unit 
@@ -664,9 +741,40 @@ void add_number(double num)
     }
 }
 
+void show_help()   // HELP window if H is pressed
+{
+    _settextwindow(2,13,23,68);
+    _setbkcolor(5);
+    _settextcolor(15); 
+    _clearscreen(_GWINDOW); 
+
+    _settextposition(2,1);
+    _outtext(" RPNV 0.5.2 is an RPN calc inspired by HP Voyager calc\n");
+    _outtext("        Made for fun by Davide Erbetta in 2024        \n"); 
+    _outtext(" Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
+    _outtext("    ----------------------------------------------    \n");
+    _outtext("    See README and LICENSE documents before use it    \n");
+    _outtext("    ----------------------------------------------    \n\n"); 
+    _outtext("                      INSTRUCTIONS                    \n\n");
+    _outtext("   Use arrow keys and SPACE bar to select the button  \n\n");
+    _outtext("      Some shortcuts from keyboard are available:     \n");
+    _outtext("  All numbers + - / * . ENTER key can be used         \n");
+    _outtext("  T --> roTaTe stack R\031    K --> toggle show stack    \n");
+    _outtext("  L --> recall last X      M --> show registers       \n");
+    _outtext("  S --> STOre in register  R --> ReCaLl from register \n"); 
+    _outtext("  P --> \343                  F --> second function     \n");
+    _outtext("  E --> EEX add 10^ exp.                              \n"); 
+    _outtext("     Not all functions have been implemented yet      \n");
+
+    getch();
+    init_calc_screen();
+    update_curpos("");
+    update_lcd();
+}
+
 void hit_button_at_curpos(int curpos) 
-// the behaviour of each button is defined here
-// for most of the button the behaviour depends if second f function has been just hit
+// the behaviour of each calculator's button is defined here
+// for the majority of the buttons the behaviour depends if second f function has been just hit
 // or, in case of numbers buttons, if STO and RCL buttons have been just hit
 {
     switch (curpos) {
@@ -768,6 +876,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (stackx_exp_hit==true) stackx_exp *= -1;
 		else stack[0] = stack[0] * -1.0;
+		number_hit = true;
 	    }
 	    else {
 		push_stack();
@@ -775,41 +884,76 @@ void hit_button_at_curpos(int curpos)
 		func_hit = true;
 		second_f = false;
 	    }
-	    define_digits();
 	    update_lcd();
 	    break;
-	case 7:  // 7
+	case 7:  // 7 / FIX
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(7);
 		else if (recall_hit==true) recall_memory(7);
 		else if (stackx_exp_hit==true) add_number_exp(7);
-		else add_number(7.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 7;
+		    disp_mode_hit = false;
+		}
+		else {
+		    add_number(7.0);
+		    number_hit = true;
+		}
+		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
+		second_f = false; 
+		disp_mode = 0;
+		disp_mode_hit = true;
+		update_lcd_badge(); 
 	    }
-	    update_lcd();
 	    break;
-	case 8:  // 8
+	case 8:  // 8 / SCI
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(8);
 		else if (recall_hit==true) recall_memory(8);
 		else if (stackx_exp_hit==true) add_number_exp(8);
-		else add_number(8.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 8;
+		    disp_mode_hit = false;
+		}
+		else {
+		    add_number(8.0);
+		    number_hit = true;
+		}
+		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
+		second_f = false; 
+		disp_mode = 1;
+		disp_mode_hit = true;
+		update_lcd_badge(); 
+		//disp_mode_hit = false;
+		//get_disp_mode_dec_digit();
+		func_hit = true;
 	    } 
-	    update_lcd();
 	    break;
-	case 9:  // 9
+	case 9:  // 9 / ENG
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(9);
 		else if (recall_hit==true) recall_memory(9);
 		else if (stackx_exp_hit==true) add_number_exp(9);
-		else add_number(9.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 9;
+		    disp_mode_hit = false;
+		} 
+		else {
+		    add_number(9.0); 
+		    number_hit = true;
+		}
+		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
+		second_f = false; 
+		disp_mode = 2;
+		disp_mode_hit = true;
+		update_lcd_badge(); 
+		//disp_mode_hit = false; 
+		//get_disp_mode_dec_digit(); 
+		func_hit = true; 
 	    } 
-	    update_lcd();
 	    break;
 	case 10: // /
 	    if (store_hit) store_hit = false; 
@@ -939,36 +1083,60 @@ void hit_button_at_curpos(int curpos)
 		if (store_hit==true) store_memory(4); 
 		else if (recall_hit==true) recall_memory(4); 
 		else if (stackx_exp_hit==true) add_number_exp(4);
-		else add_number(4.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 4;
+		    disp_mode_hit = false;
+		}
+		else {
+		    add_number(4.0);
+		    number_hit = true;
+		}
+		update_lcd();
 	    } else {
 		ang_mode = 0;
 		second_f = false;
+		update_lcd_badge();
 	    } 
-	    update_lcd();
 	    break;
 	case 18: // 5 / RAD
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(5); 
 		else if (recall_hit==true) recall_memory(5); 
 		else if (stackx_exp_hit==true) add_number_exp(5);
-		else add_number(5.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 5;
+		    disp_mode_hit = false;
+		} 
+		else {
+		    add_number(5.0);
+		    number_hit = true;
+		}
+		update_lcd(); 
 	    } else {
 		ang_mode = 1;
 		second_f = false;
+		update_lcd_badge();
 	    } 
-	    update_lcd();
 	    break;
 	case 19: // 6 / GRD
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(6); 
 		else if (recall_hit==true) recall_memory(6); 
 		else if (stackx_exp_hit==true) add_number_exp(6);
-		else add_number(6.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 6;
+		    disp_mode_hit = false;
+		} 
+		else {
+		    add_number(6.0);
+		    number_hit = true;
+		}
+		update_lcd();
 	    } else {
 		ang_mode = 2;
 		second_f = false;
+		update_lcd_badge();
 	    } 
-	    update_lcd();
 	    break;
 	case 20: // * 
 	    if (store_hit) store_hit = false; 
@@ -1047,33 +1215,54 @@ void hit_button_at_curpos(int curpos)
 		if (store_hit==true) store_memory(1); 
 		else if (recall_hit==true) recall_memory(1); 
 		else if (stackx_exp_hit==true) add_number_exp(1);
-		else add_number(1.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 1;
+		    disp_mode_hit = false;
+		} 
+		else {
+		    add_number(1.0);
+		    number_hit = true;
+		}
+		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    update_lcd();
 	    break;
 	case 28: // 2
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(2); 
 		else if (recall_hit==true) recall_memory(2); 
 		else if (stackx_exp_hit==true) add_number_exp(2);
-		else add_number(2.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 2;
+		    disp_mode_hit = false;
+		} 
+		else {
+		    add_number(2.0);
+		    number_hit = true;
+		}
+		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    update_lcd(); 
 	    break;
 	case 29: // 3
 	    if (second_f==false) { 
 		if (store_hit==true) store_memory(3); 
 		else if (recall_hit==true) recall_memory(3); 
 		else if (stackx_exp_hit==true) add_number_exp(3);
-		else add_number(3.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 3;
+		    disp_mode_hit = false;
+		} 
+		else {
+		    add_number(3.0);
+		    number_hit = true;
+		}
+		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    update_lcd();
 	    break;
 	case 30: // -
 	    if (store_hit) store_hit = false; 
@@ -1090,12 +1279,21 @@ void hit_button_at_curpos(int curpos)
 	    define_digits();
 	    update_lcd(); 
 	    break;
+	case 31: // ON / HELP
+	    if (second_f==false) {
+		// ON button, do nothing
+	    } else {
+		second_f = false;
+		update_lcd_badge();
+		show_help();
+	    } 
+	    break;
 	case 32: // f - 2nd function
 	    if (store_hit) store_hit = false;
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) second_f = true;
 	    else second_f = false;
-	    update_lcd();
+	    update_lcd_badge();
 	    break;
 	case 34: // STO / INT
 	    if (second_f==false) { 
@@ -1105,14 +1303,15 @@ void hit_button_at_curpos(int curpos)
 		    if (recall_hit) recall_hit = false;
 		    if (second_f) second_f = false;
 		} else store_hit = false;
+		update_lcd_badge();
 	    } else {
 		lastx = stack[0];
 		stack[0] = (int)stack[0];
 		second_f = false;
 		func_hit = true;
 		define_digits(); 
+		update_lcd();
 	    } 
-	    update_lcd();
 	    break;
 	case 35: // RCL / FRAC
 	    if (second_f==false) { 
@@ -1122,14 +1321,15 @@ void hit_button_at_curpos(int curpos)
 		    if (store_hit) store_hit = false;
 		    if (second_f) second_f = false;
 		} else recall_hit = false;
+		update_lcd_badge();
 	    } else {
 		lastx = stack[0];
 		stack[0] = stack[0] - (int)stack[0];
 		second_f = false;
 		func_hit = true;
 		define_digits(); 
+		update_lcd(); 
 	    } 
-	    update_lcd();
 	    break;
 	case 36: // ENTER / LastX --> ensure identical code for case 26, still ENTER
 	    if (store_hit) store_hit = false; 
@@ -1153,11 +1353,18 @@ void hit_button_at_curpos(int curpos)
 		if (store_hit==true) store_memory(0); 
 		else if (recall_hit==true) recall_memory(0); 
 		else if (stackx_exp_hit==true) add_number_exp(0);
-		else add_number(0.0);
+		else if (disp_mode_hit==true) {
+		    disp_mode_dec_digit = 0;
+		    disp_mode_hit = false;
+		} 
+		else {
+		    add_number(0.0);
+		    number_hit = true;
+		}
+		update_lcd(); 
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    update_lcd(); 
 	    break;
 	case 38: // .
 	    if (store_hit) store_hit = false; 
@@ -1179,6 +1386,7 @@ void hit_button_at_curpos(int curpos)
 		    func_hit = false;
 		    stackx_dec = true;
 		} else if (stackx_dec==false) stackx_dec = true;
+		number_hit = true;
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
@@ -1199,41 +1407,7 @@ void hit_button_at_curpos(int curpos)
 	    define_digits();
 	    update_lcd(); 
 	    break;
-	default:
-	    print_message(14,"Not yet implemented");
-	    break;
     }
-}
-
-void show_help()   // HELP window if H is pressed
-{
-    _settextwindow(2,13,23,68);
-    _setbkcolor(5);
-    _settextcolor(15); 
-    _clearscreen(_GWINDOW); 
-
-    _settextposition(2,1);
-    _outtext(" RPNV 0.5.2 is an RPN calc inspired by HP Voyager calc\n");
-    _outtext("        Made for fun by Davide Erbetta in 2024        \n"); 
-    _outtext(" Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
-    _outtext("    ----------------------------------------------    \n");
-    _outtext("    See README and LICENSE documents before use it    \n");
-    _outtext("    ----------------------------------------------    \n\n"); 
-    _outtext("                      INSTRUCTIONS                    \n\n");
-    _outtext("   Use arrow keys and SPACE bar to select the button  \n\n");
-    _outtext("      Some shortcuts from keyboard are available:     \n");
-    _outtext("  All numbers + - / * . ENTER key can be used         \n");
-    _outtext("  T --> roTaTe stack R\031    K --> toggle show stack    \n");
-    _outtext("  L --> recall last X      M --> show registers       \n");
-    _outtext("  S --> STOre in register  R --> ReCaLl from register \n"); 
-    _outtext("  P --> \343                  F --> second function     \n");
-    _outtext("  E --> EEX add 10^ exp.                              \n"); 
-    _outtext("     Not all functions have been implemented yet      \n");
-
-    getch();
-    init_calc_screen();
-    update_curpos("");
-    update_lcd();
 }
 
 int init_mouse()
@@ -1454,8 +1628,6 @@ void main()
     update_curpos("");   // move button cursor to defaul position - ENTER key
 
     update_lcd();       // update the lcd screen with starting value
-
-    print_message(10,"ESC to exit - H for HELP"); 
 
     while (result >= 0) result = main_loop();        // main calc loop
 
