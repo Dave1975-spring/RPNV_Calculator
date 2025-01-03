@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2024 Davide Erbetta
+ * Copyright (c) 2025 Davide Erbetta
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,10 @@
  * - Shawn Hargreaves for his great FED text editor
  * - "root42" for his very usefull MS-DOS programming tutorial
  *
+ ****************************************************************************
+ *
+ * To be compiled with Open Watcom 1.9
+ *
  */
 
 #include <stdio.h>
@@ -39,12 +43,14 @@
 #include <string.h>
 #include <i86.h>
 
+#define VERSION "0.7.3"
 #define offset_col 7
 #define offset_row 8
 #define pitch_col 7
 #define pitch_row 4
 #define M_PI 3.14159265359
 #define MAXDIGITS 12
+#define A 12  // used in Spouge's approximation for Gamma function
 
 double stack[4] = {0.0,0.0,0.0,0.0}; // stack>: X,Y,Z,T registers
 double lastx = 0.0; // last x register
@@ -496,13 +502,36 @@ void update_lcd()
     if (show_stack) show_full_stack(); // show the stack + Last-x stack if requested
 }
 
-double factorial_int(double number)
+double sp_gamma(double z)
+// gamma function according to Spouge's approximation
+// as implemented @ rosettacode.org
 {
-    int i;
+    const int a = A;  // see #define statement 
+    static double c_space[A];
+    static double *c = NULL;
+    int k;
+    double accm;
 
-    for (i=(int)(number-1); i>0; i--) number *= i;
+    if ( c == NULL ) {
+	double k1_factrl = 1.0; // (k-1)*(-1)^k with 0!==1
+	c = c_space;
+	c[0] = sqrt(2.0 * M_PI);
+	for (k=1; k<a; k++) {
+	    c[k] = exp(a-k)*pow(a-k,k-0.5) / k1_factrl;
+	    k1_factrl *= -k;
+	}
+    }
+    accm = c[0];
+    for (k=1; k<a; k++) {
+	accm += c[k] / (z+k);
+    }
+    accm *= exp(-(z+a)) * pow(z+a, z+0.5); // gamma(z+1)
+    return accm/z;
+}
 
-    return number;
+double factorial(double number)
+{
+    return number * sp_gamma(number);
 }
 
 void update_curpos(char *dir)
@@ -743,13 +772,17 @@ void add_number(double num)
 
 void show_help()   // HELP window if H is pressed
 {
+    char *firstrow;
+
+    sprintf(firstrow," RPNV %s is an RPN calc inspired by HP Voyager calc\n",VERSION);
+
     _settextwindow(2,13,23,68);
     _setbkcolor(5);
     _settextcolor(15); 
     _clearscreen(_GWINDOW); 
 
     _settextposition(2,1);
-    _outtext(" RPNV 0.6.2 is an RPN calc inspired by HP Voyager calc\n");
+    _outtext(firstrow);
     _outtext("        Made for fun by Davide Erbetta in 2024        \n"); 
     _outtext(" Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
     _outtext("    ----------------------------------------------    \n");
@@ -795,7 +828,7 @@ void hit_button_at_curpos(int curpos)
 		func_hit = true;
 		second_f = false; 
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break; 
 	case 2:  // e^x / LN
@@ -815,7 +848,7 @@ void hit_button_at_curpos(int curpos)
 		func_hit = true;
 		second_f = false; 
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break; 
 	case 3:  // 10^x / LOG10
@@ -835,7 +868,7 @@ void hit_button_at_curpos(int curpos)
 		func_hit = true;
 		second_f = false; 
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break; 
 	case 4:  // y^x /
@@ -851,7 +884,7 @@ void hit_button_at_curpos(int curpos)
 	    else {
 		print_message(14,"Not yet implemented");
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break;
 	case 5:  // 1/x / 
@@ -867,7 +900,7 @@ void hit_button_at_curpos(int curpos)
 	    else {
 		print_message(14,"Not yet implemented");
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break;
 	case 6:  // CHS / PI
@@ -876,7 +909,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (stackx_exp_hit==true) stackx_exp *= -1;
 		else stack[0] = stack[0] * -1.0;
-		number_hit = true;
+		//number_hit = true;
 	    }
 	    else {
 		push_stack();
@@ -905,6 +938,7 @@ void hit_button_at_curpos(int curpos)
 		disp_mode = 0;
 		disp_mode_hit = true;
 		update_lcd_badge(); 
+		func_hit = true; 
 	    }
 	    break;
 	case 8:  // 8 / SCI
@@ -926,8 +960,6 @@ void hit_button_at_curpos(int curpos)
 		disp_mode = 1;
 		disp_mode_hit = true;
 		update_lcd_badge(); 
-		//disp_mode_hit = false;
-		//get_disp_mode_dec_digit();
 		func_hit = true;
 	    } 
 	    break;
@@ -950,8 +982,6 @@ void hit_button_at_curpos(int curpos)
 		disp_mode = 2;
 		disp_mode_hit = true;
 		update_lcd_badge(); 
-		//disp_mode_hit = false; 
-		//get_disp_mode_dec_digit(); 
 		func_hit = true; 
 	    } 
 	    break;
@@ -968,7 +998,7 @@ void hit_button_at_curpos(int curpos)
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    define_digits(); 
+	    //define_digits(); 
 	    update_lcd(); 
 	    break;
 	case 11: // % / 
@@ -982,8 +1012,11 @@ void hit_button_at_curpos(int curpos)
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    define_digits(); 
+	    //define_digits(); 
 	    update_lcd(); 
+	    break;
+	case 12: 
+	    print_message(14,"Not yet implemented");
 	    break;
 	case 13: // SIN / ASIN
 	    if (store_hit) store_hit = false; 
@@ -1006,7 +1039,7 @@ void hit_button_at_curpos(int curpos)
 		    second_f = false;
 		} else print_message(6,"number outside function domain");
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break;
 	case 14: // COS / ACOS
@@ -1030,7 +1063,7 @@ void hit_button_at_curpos(int curpos)
 		    second_f = false;
 		} else print_message(6,"number outside function domain"); 
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break;
 	case 15: // TAN / ATAN
@@ -1049,10 +1082,10 @@ void hit_button_at_curpos(int curpos)
 	    }
 	    pull_stack();
 	    func_hit = true;
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break;
-	case 16: // EEX / FACTORIAL
+	case 16: // EEX / N!
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -1065,17 +1098,11 @@ void hit_button_at_curpos(int curpos)
 		}
 	    } 
 	    else {
-		if (stackx_dec_digit==0) {
-		    if (stackx_exp_hit==true) stackx_by_exp();
-		    stack[0] = factorial_int(stack[0]);
-		    func_hit = true;
-		    second_f = false;
-		    define_digits();
-		} else {
-		    print_message(14,"Factorial implemented only for integer"); 
-		}
+		if (stackx_exp_hit==true) stackx_by_exp();
+		stack[0] = factorial(stack[0]);
+		func_hit = true;
+		second_f = false;
 	    }
-	    define_digits();
 	    update_lcd();
 	    break; 
 	case 17: // 4 / DEG
@@ -1150,8 +1177,14 @@ void hit_button_at_curpos(int curpos)
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    define_digits();
+	    // define_digits();
 	    update_lcd();
+	    break;
+	case 21:
+	    print_message(14,"Not yet implemented");
+	    break;
+	case 22:
+	    print_message(14,"Not yet implemented");
 	    break;
 	case 23: // rotate stack
 	    if (store_hit) store_hit = false; 
@@ -1163,7 +1196,7 @@ void hit_button_at_curpos(int curpos)
 	    else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break;
 	case 24: // x<>y / clear Registers 0-9
@@ -1177,7 +1210,7 @@ void hit_button_at_curpos(int curpos)
 		clear_memory();
 		second_f = false;
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break; 
 	case 25: // CLx / 
@@ -1190,10 +1223,10 @@ void hit_button_at_curpos(int curpos)
 	    else {
 		print_message(14,"Not yet implemented");
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break;
-	case 26: // ENTER / LastX --> ensure identical code for case 36, still ENTER
+	case 26: case 36: // ENTER / LastX --> ensure identical code for case 36, still ENTER
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -1207,7 +1240,7 @@ void hit_button_at_curpos(int curpos)
 		second_f = false;
 		func_hit = true;
 	    }
-	    define_digits();
+	    //define_digits();
 	    update_lcd();
 	    break;
 	case 27: // 1
@@ -1276,7 +1309,7 @@ void hit_button_at_curpos(int curpos)
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    define_digits();
+	    //define_digits();
 	    update_lcd(); 
 	    break;
 	case 31: // ON / HELP
@@ -1295,6 +1328,9 @@ void hit_button_at_curpos(int curpos)
 	    else second_f = false;
 	    update_lcd_badge();
 	    break;
+	case 33:
+	    print_message(14,"Not yet implemented");
+	    break; 
 	case 34: // STO / INT
 	    if (second_f==false) { 
 		if (stackx_exp_hit==true) stackx_by_exp();
@@ -1330,24 +1366,7 @@ void hit_button_at_curpos(int curpos)
 		define_digits(); 
 		update_lcd(); 
 	    } 
-	    break;
-	case 36: // ENTER / LastX --> ensure identical code for case 26, still ENTER
-	    if (store_hit) store_hit = false; 
-	    if (recall_hit) recall_hit = false; 
-	    if (second_f==false) {
-		if (stackx_exp_hit==true) stackx_by_exp();
-		push_stack();
-		enter_hit = true;
-	    }
-	    else {
-		push_stack();
-		stack[0] = lastx;
-		second_f = false;
-		func_hit = true;
-	    }
-	    define_digits();
-	    update_lcd();
-	    break;
+	    break; 
 	case 37: // 0
 	    if (second_f==false) { 
 		if (store_hit==true) store_memory(0); 
@@ -1392,6 +1411,9 @@ void hit_button_at_curpos(int curpos)
 	    } 
 	    update_lcd();
 	    break;
+	case 39:
+	    print_message(14,"Not yet implemented");
+	    break; 
 	case 40: // +
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
@@ -1404,7 +1426,7 @@ void hit_button_at_curpos(int curpos)
 	    } else {
 		print_message(14,"Not yet implemented");
 	    } 
-	    define_digits();
+	    //define_digits();
 	    update_lcd(); 
 	    break;
     }
@@ -1425,6 +1447,21 @@ void show_mouse()
     reg.x.ax = 0x01;
     int86( 0x33, &reg, &reg);
 }
+
+void hide_mouse()
+{
+    union REGS reg;
+    reg.x.ax = 0x02;
+    int86( 0x33, &reg, &reg);
+}
+
+void double_speed_mouse()
+{
+    union REGS reg;
+    reg.x.ax = 0x13;
+    int86( 0x33, &reg, &reg);
+}
+
 
 void get_mouse( int *x, int *y, int *left, int*right )
 {
@@ -1472,6 +1509,10 @@ int mouse_position(int mouse_x, int mouse_y)
     if ((mouse_x >= 70) && (mouse_x <= 74)) mouse_col = 10; 
 
     mouse_pos = mouse_row * 10 + mouse_col;
+
+    // special case for ENTER button, occupying also space between rows 3 and 4
+
+    if ((mouse_x >= 42) && (mouse_x <= 46) && (mouse_y == 19)) mouse_pos = 26; 
 
     if (mouse_pos < 0) mouse_pos = 0; // if negative, so no button, then set to zero;
     if (mouse_pos == 36) second_f = false; // no second function for buttons 36
@@ -1625,11 +1666,15 @@ void main()
 
     show_mouse();
 
+    double_speed_mouse();
+
     update_curpos("");   // move button cursor to defaul position - ENTER key
 
     update_lcd();       // update the lcd screen with starting value
 
     while (result >= 0) result = main_loop();        // main calc loop
+
+    hide_mouse();
 
     closure_steps();    // return to default video mode
 }
