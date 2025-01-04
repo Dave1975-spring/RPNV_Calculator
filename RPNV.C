@@ -43,14 +43,17 @@
 #include <string.h>
 #include <i86.h>
 
-#define VERSION "0.7.3"
+#define VERSION "0.7.4"
 #define offset_col 7
 #define offset_row 8
 #define pitch_col 7
 #define pitch_row 4
-#define M_PI 3.14159265359
 #define MAXDIGITS 12
 #define A 12  // used in Spouge's approximation for Gamma function
+
+#ifndef M_PI
+#define M_PI 3.14159265359
+#endif
 
 double stack[4] = {0.0,0.0,0.0,0.0}; // stack>: X,Y,Z,T registers
 double lastx = 0.0; // last x register
@@ -1099,9 +1102,12 @@ void hit_button_at_curpos(int curpos)
 	    } 
 	    else {
 		if (stackx_exp_hit==true) stackx_by_exp();
-		stack[0] = factorial(stack[0]);
-		func_hit = true;
-		second_f = false;
+		if (stack[0]>=0.0) {
+		    if (stack[0]>0.0) stack[0] = factorial(stack[0]);
+		    else stack[0]=1.0;
+		    func_hit = true;
+		    second_f = false;
+		} else print_message(6,"Negative number!");
 	    }
 	    update_lcd();
 	    break; 
