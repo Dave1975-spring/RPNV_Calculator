@@ -37,5 +37,4 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 - F toggles the F second function
 - E for EEX function 
 
-![image](https://github.com/user-attachments/assets/9dd779b8-923e-40fd-a5bf-e9af1f1ca8d8)
-
+![Calc layout](https://github.com/user-attachments/assets/05ecbbef-787c-4fd0-afc1-cd8879086e32)
