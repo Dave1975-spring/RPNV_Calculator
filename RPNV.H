@@ -47,7 +47,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.8.5"
+#define VERSION "0.8.6"
 #define offset_col 7
 #define offset_row 8
 #define pitch_col 7
