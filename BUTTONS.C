@@ -48,10 +48,15 @@ void hit_button_at_curpos(int curpos)
 	    if (recall_hit) recall_hit = false;
 	    if (stackx_exp_hit==true) stackx_by_exp();
 	    if (second_f==false) {
-		lastx = stack[0];
-		stack[0] = sqrt(stack[0]);
-		pull_stack();
-		func_hit = true; 
+		if (stack[0]>=0.0) {
+		    lastx = stack[0];
+		    stack[0] = sqrt(stack[0]);
+		    pull_stack();
+		    func_hit = true; 
+		    update_lcd();
+		} else {
+		    print_message(6,"Negative number!");
+		}
 	    }
 	    else {
 		lastx = stack[0];
@@ -59,9 +64,8 @@ void hit_button_at_curpos(int curpos)
 		pull_stack();
 		func_hit = true;
 		second_f = false; 
+		update_lcd(); 
 	    }
-	    //define_digits();
-	    update_lcd();
 	    break; 
 	case 2:  // e^x / LN
 	    if (store_hit) store_hit = false; 
@@ -72,16 +76,21 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = exp(stack[0]);
 		pull_stack();
 		func_hit = true; 
+		update_lcd(); 
 	    }
 	    else {
-		lastx = stack[0];
-		stack[0] = log(stack[0]);
-		pull_stack();
-		func_hit = true;
-		second_f = false; 
+		if (stack[0]>=0.0) { 
+		    lastx = stack[0];
+		    stack[0] = log(stack[0]);
+		    pull_stack();
+		    func_hit = true;
+		    second_f = false; 
+		    update_lcd(); 
+		} else {
+		    print_message(6,"Negative number!");
+		    second_f = false; 
+		} 
 	    }
-	    //define_digits();
-	    update_lcd();
 	    break; 
 	case 3:  // 10^x / LOG10
 	    if (store_hit) store_hit = false; 
@@ -92,16 +101,21 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = pow(10.0,stack[0]);
 		pull_stack();
 		func_hit = true; 
+		update_lcd(); 
 	    }
 	    else {
-		lastx = stack[0];
-		stack[0] = log10(stack[0]);
-		pull_stack();
-		func_hit = true;
-		second_f = false; 
+		if (stack[0]>=0.0) { 
+		    lastx = stack[0];
+		    stack[0] = log10(stack[0]);
+		    pull_stack();
+		    func_hit = true;
+		    second_f = false; 
+		    update_lcd(); 
+		} else {
+		    print_message(6,"Negative number!");
+		    second_f = false; 
+		}
 	    }
-	    //define_digits();
-	    update_lcd();
 	    break; 
 	case 4:  // y^x /
 	    if (store_hit) store_hit = false; 
@@ -112,12 +126,12 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = pow(stack[1],stack[0]);
 		pull_stack();
 		func_hit = true; 
+		update_lcd(); 
 	    }
 	    else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    }
-	    //define_digits();
-	    update_lcd();
 	    break;
 	case 5:  // 1/x / 
 	    if (store_hit) store_hit = false; 
@@ -128,12 +142,12 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = 1.0 / stack[0];
 		pull_stack();
 		func_hit = true; 
+		update_lcd(); 
 	    }
 	    else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    }
-	    //define_digits();
-	    update_lcd();
 	    break;
 	case 6:  // CHS / PI
 	    if (store_hit) store_hit = false; 
@@ -227,11 +241,11 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = stack[1]/stack[0];
 		pull_stack();
 		func_hit = true;
+		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
-	    //define_digits(); 
-	    update_lcd(); 
 	    break;
 	case 11: // % / 
 	    if (store_hit) store_hit = false; 
@@ -241,11 +255,11 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = stack[1]/100.0*stack[0];
 		pull_stack();
 		func_hit = true;
+		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
-	    //define_digits(); 
-	    update_lcd(); 
 	    break;
 	case 12: 
 	    print_message(14,"Not yet implemented");
@@ -260,6 +274,7 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = sin(stack[0]);
 		pull_stack();
 		func_hit = true;
+		update_lcd();
 	    }
 	    else {
 		if ((stack[0]>=-1.0 && stack[0]<=1.0)) {
@@ -268,11 +283,13 @@ void hit_button_at_curpos(int curpos)
 		    back_convert_ang();
 		    pull_stack();
 		    func_hit = true;
-		    second_f = false;
-		} else print_message(6,"number outside function domain");
+		    second_f = false; 
+		    update_lcd();
+		} else {
+		    print_message(6,"number outside function domain");
+		    second_f = false; 
+		}
 	    }
-	    //define_digits();
-	    update_lcd();
 	    break;
 	case 14: // COS / ACOS
 	    if (store_hit) store_hit = false; 
@@ -284,6 +301,7 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = cos(stack[0]);
 		pull_stack();
 		func_hit = true;
+		update_lcd();
 	    }
 	    else {
 		if ((stack[0]>=-1.0 && stack[0]<=1.0)) { 
@@ -292,11 +310,13 @@ void hit_button_at_curpos(int curpos)
 		    back_convert_ang(); 
 		    pull_stack();
 		    func_hit = true;
-		    second_f = false;
-		} else print_message(6,"number outside function domain"); 
+		    second_f = false; 
+		    update_lcd();
+		} else { 
+		    print_message(6,"number outside function domain"); 
+		    second_f = false; 
+		}
 	    }
-	    //define_digits();
-	    update_lcd();
 	    break;
 	case 15: // TAN / ATAN
 	    if (store_hit) store_hit = false; 
@@ -314,7 +334,6 @@ void hit_button_at_curpos(int curpos)
 	    }
 	    pull_stack();
 	    func_hit = true;
-	    //define_digits();
 	    update_lcd();
 	    break;
 	case 16: // EEX / N!
@@ -328,6 +347,7 @@ void hit_button_at_curpos(int curpos)
 		    }
 		    stackx_exp_hit = true;
 		}
+		update_lcd();
 	    } 
 	    else {
 		if (stackx_exp_hit==true) stackx_by_exp();
@@ -335,10 +355,13 @@ void hit_button_at_curpos(int curpos)
 		    if (stack[0]>0.0) stack[0] = factorial(stack[0]);
 		    else stack[0]=1.0;
 		    func_hit = true;
-		    second_f = false;
-		} else print_message(6,"Negative number!");
+		    second_f = false; 
+		    update_lcd();
+		} else { 
+		    print_message(6,"Negative number!");
+		    second_f = false; 
+		}
 	    }
-	    update_lcd();
 	    break; 
 	case 17: // 4 / DEG
 	    if (second_f==false) {
@@ -409,11 +432,11 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = stack[1]*stack[0];
 		pull_stack();
 		func_hit = true;
+		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
-	    // define_digits();
-	    update_lcd();
 	    break;
 	case 21:
 	    print_message(14,"Not yet implemented");
@@ -427,12 +450,12 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (stackx_exp_hit==true) stackx_by_exp();
 		rotate_stack();
+		update_lcd();
 	    }
 	    else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
-	    //define_digits();
-	    update_lcd();
 	    break;
 	case 24: // x<>y / clear Registers 0-9
 	    if (store_hit) store_hit = false; 
@@ -445,7 +468,6 @@ void hit_button_at_curpos(int curpos)
 		clear_memory();
 		second_f = false;
 	    }
-	    //define_digits();
 	    update_lcd();
 	    break; 
 	case 25: // CLx / 
@@ -455,12 +477,12 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = 0.0;
 		stackx_dec = false;
 		func_hit = true;
+		update_lcd();
 	    }
 	    else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    }
-	    //define_digits();
-	    update_lcd();
 	    break;
 	case 26: case 36: // ENTER / LastX --> ensure identical code for case 36, still ENTER
 	    if (store_hit) store_hit = false; 
@@ -476,7 +498,6 @@ void hit_button_at_curpos(int curpos)
 		second_f = false;
 		func_hit = true;
 	    }
-	    //define_digits();
 	    update_lcd();
 	    break;
 	case 27: // 1
@@ -495,6 +516,7 @@ void hit_button_at_curpos(int curpos)
 		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
 	    break;
 	case 28: // 2
@@ -513,6 +535,7 @@ void hit_button_at_curpos(int curpos)
 		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
 	    break;
 	case 29: // 3
@@ -531,6 +554,7 @@ void hit_button_at_curpos(int curpos)
 		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
 	    break;
 	case 30: // -
@@ -542,11 +566,11 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = stack[1]-stack[0];
 		pull_stack();
 		func_hit = true;
+		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
-	    //define_digits();
-	    update_lcd(); 
 	    break;
 	case 31: // ON / HELP
 	    if (second_f==false) {
@@ -581,7 +605,6 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = (int)stack[0];
 		second_f = false;
 		func_hit = true;
-		define_digits(); 
 		update_lcd();
 	    } 
 	    break;
@@ -598,8 +621,7 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		stack[0] = stack[0] - (int)stack[0];
 		second_f = false;
-		func_hit = true;
-		define_digits(); 
+		func_hit = true; 
 		update_lcd(); 
 	    } 
 	    break; 
@@ -619,6 +641,7 @@ void hit_button_at_curpos(int curpos)
 		update_lcd(); 
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
 	    break;
 	case 38: // .
@@ -642,10 +665,11 @@ void hit_button_at_curpos(int curpos)
 		    stackx_dec = true;
 		} else if (stackx_dec==false) stackx_dec = true;
 		number_hit = true;
+		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
-	    update_lcd();
 	    break;
 	case 39:
 	    print_message(14,"Not yet implemented");
@@ -659,11 +683,11 @@ void hit_button_at_curpos(int curpos)
 		stack[0] = stack[1]+stack[0];
 		pull_stack();
 		func_hit = true;
+		update_lcd();
 	    } else {
 		print_message(14,"Not yet implemented");
+		second_f = false; 
 	    } 
-	    //define_digits();
-	    update_lcd(); 
 	    break;
     }
 }

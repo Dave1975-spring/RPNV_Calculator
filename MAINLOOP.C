@@ -56,16 +56,16 @@ int main_loop()  // this is the main loop tracking the key pressed by the user
 	    c = getch();
 	    switch (c) {
 		case 72: // UP
-		    update_curpos("up");
+		    update_curpos(UP);
 		    break;
 		case 80: // DOWN
-		    update_curpos("down");
+		    update_curpos(DOWN);
 		    break;
 		case 75: // LEFT
-		    update_curpos("left");
+		    update_curpos(LEFT);
 		    break;
 		case 77: // RIGHT
-		    update_curpos("right");
+		    update_curpos(RIGHT);
 		    break; 
 	    } 
 	} else switch (c) {

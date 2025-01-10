@@ -53,6 +53,11 @@
 #define pitch_col 7
 #define pitch_row 4
 #define MAXDIGITS 12
+#define NOMOVE 0
+#define UP 1
+#define DOWN 2
+#define LEFT 3
+#define RIGHT 4
 #define A 12  // used in Spouge's approximation for Gamma function
 #ifndef M_PI
 #define M_PI 3.14159265359
@@ -105,7 +110,7 @@ void init_calc_screen(); //
 void print_message(int color,char *message); //
 void update_lcd_badge(); //
 void update_lcd(); //
-void update_curpos(char *dir); //
+void update_curpos(int dir); //
 
 // In math.c
 // all maths functions, except the simplest

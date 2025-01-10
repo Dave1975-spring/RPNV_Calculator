@@ -390,9 +390,8 @@ void update_lcd()
     if (show_stack) show_full_stack(); // show the stack + Last-x stack if requested
 }
 
-void update_curpos(char *dir)
+void update_curpos(int dir)
 {
-    char *testo;
     int cur_row,cur_col;
     int curposx,curposy;
 
@@ -416,19 +415,19 @@ void update_curpos(char *dir)
 
     // update cursor position
 
-    if (dir=="up") {
+    if (dir==UP) {
 	if (curposy==1) curposy = 4;
 	else curposy = curposy - 1; 
     }
-    if (dir=="down") {
+    if (dir==DOWN) {
 	if (curposy==4) curposy = 1;
 	else curposy = curposy + 1;
     }
-    if (dir=="left") {
+    if (dir==LEFT) {
 	if (curposx==1) curposx = 10;
 	else curposx = curposx - 1;
     }
-    if (dir=="right") {
+    if (dir==RIGHT) {
 	if (curposx==10) curposx = 1;
 	else curposx = curposx + 1;
     }
@@ -450,6 +449,4 @@ void update_curpos(char *dir)
     _outtext("\021"); 
     _settextposition(2,1);
     _outtext("\021"); 
-
-    //return curpos; 
 }

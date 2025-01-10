@@ -36,7 +36,7 @@
  */
 
 #include "rpnv.h"
-
+/*
 void define_digits()
 {
     char text_stackx[35];
@@ -69,7 +69,7 @@ void define_digits()
 
     if (stackx_digit==0) stackx_digit = 1; // in case of 0.0 at least 1 digits
 }
-
+*/
 void stackx_by_exp()
 {
     int i;

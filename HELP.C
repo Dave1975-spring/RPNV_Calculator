@@ -68,6 +68,6 @@ void show_help()   // HELP window if H is pressed
 
     getch();
     init_calc_screen();
-    update_curpos("");
+    update_curpos(NOMOVE);
     update_lcd();
 }

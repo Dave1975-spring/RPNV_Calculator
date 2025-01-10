@@ -142,7 +142,7 @@ void show_memory()  // show the registers content
 
     getch();
     init_calc_screen();
-    update_curpos("");
+    update_curpos(NOMOVE);
     update_lcd();
 }
 
@@ -157,7 +157,7 @@ void recall_memory(int mempos)
 {
     push_stack();
     stack[0] = memory[mempos]; 
-    define_digits();
+    //define_digits();
     recall_hit = false;
     func_hit = true;
 }

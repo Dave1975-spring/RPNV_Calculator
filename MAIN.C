@@ -51,7 +51,7 @@ void main()
 
     double_speed_mouse();
 
-    update_curpos("");   // move button cursor to defaul position - ENTER key
+    update_curpos(NOMOVE);   // move button cursor to defaul position - ENTER key
 
     update_lcd();       // update the lcd screen with starting value
 
