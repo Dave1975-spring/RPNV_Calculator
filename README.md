@@ -35,6 +35,8 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 - C recalls the value from a memory register from 0 to 9 and place it in the stack X register
 - P recalls the pi-greek value
 - F toggles the F second function
-- E for EEX function 
+- E for EEX function
+
+Launching with 'log' option writes a datalog file containing all calculator keystrokes.
 
 ![Calc layout](https://github.com/user-attachments/assets/05ecbbef-787c-4fd0-afc1-cd8879086e32)
