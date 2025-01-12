@@ -47,7 +47,8 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.8.6"
+#define VERSION "0.9.7"
+#define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
 #define pitch_col 7
@@ -78,6 +79,7 @@ int stackx_digit = 0;  // total number of digits in stack X
 int stackx_dec_digit = 0; // number of decimal digits in stack X
 int stackx_exp = 0; // 10^ exponent of stackx value
 int stackx_exp_digit = 0; // numer of digit inserted in stackx_exp
+bool buttonslog = false; // track if datalog of button pressed has to be written
 bool stackx_dec = false; // true = decimal number ; false = integer
 bool stackx_exp_hit = false; // track if EEX button has been just pressed
 bool enter_hit = false; // track if ENTER has been just hit
@@ -88,6 +90,7 @@ bool disp_mode_hit = false; // track if FIX or SCI or ENG has been just hit
 bool number_hit = false; // track if a number has been just hit
 bool second_f = false; // track if f second function button has been just hit
 bool show_stack = false; // track if the stack has to be show when LCD is updated
+FILE *fp; // pointer to buttonslog file
 
 /*************** Functions declaration ***************/
 

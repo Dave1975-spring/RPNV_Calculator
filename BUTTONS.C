@@ -42,6 +42,7 @@ void hit_button_at_curpos(int curpos)
 // for the majority of the buttons the behaviour depends if second f function has been just hit
 // or, in case of numbers buttons, if STO and RCL buttons have been just hit
 {
+    if ((buttonslog) && (curpos!=0)) fprintf(fp,"%i\n",curpos);
     switch (curpos) {
 	case 1:  // sqrt(x) / x^2
 	    if (store_hit) store_hit = false;
@@ -489,6 +490,7 @@ void hit_button_at_curpos(int curpos)
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
 		if (stackx_exp_hit==true) stackx_by_exp();
+		if (func_hit) func_hit = false; 
 		push_stack();
 		enter_hit = true;
 	    }

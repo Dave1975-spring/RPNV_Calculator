@@ -37,9 +37,19 @@
 
 #include "rpnv.h"
 
-void main()
-{
+void main(int argc, char *argv[])
+{ 
     int result = 0;
+    char *datalogtxt;
+
+    while (argc-->1) {
+	if (strcmp(argv[argc],"log")==0) {
+	    buttonslog = true;
+	    fp = fopen(LOGFILE,"w");
+	    sprintf(datalogtxt,"RPNV %s - DATALOG\n",VERSION);
+	    fprintf(fp,datalogtxt);
+	}
+    }
 
     initial_steps();    // set video mode
 
@@ -60,4 +70,6 @@ void main()
     hide_mouse();
 
     closure_steps();    // return to default video mode
+
+    if (buttonslog) fclose(fp);
 }
