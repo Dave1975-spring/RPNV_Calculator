@@ -37,6 +37,6 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 - F toggles the F second function
 - E for EEX function
 
-Launching with 'log' option writes a datalog file containing all calculator keystrokes.
+A data.log file is written at every use, containing all calculator keystrokes, their meaning and the the stack & last-x registers content at each button pressed.
 
 ![Calc layout](https://github.com/user-attachments/assets/05ecbbef-787c-4fd0-afc1-cd8879086e32)
