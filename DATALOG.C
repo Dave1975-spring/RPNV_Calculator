@@ -37,31 +37,35 @@
 
 #include "rpnv.h"
 
-void main(int argc, char *argv[])
-{ 
-    int result = 0;
+void start_datalog()
+{
+    char datalogtxt[80];
+    struct tm time_of_day;
+    time_t ltime;
+    auto char buf[26];
 
-    start_datalog();
+    time(&ltime);
+    _localtime(&ltime,&time_of_day);
 
-    initial_steps();    // set video mode
+    fp = freopen(LOGFILE,"w",stderr);
 
-    init_calc_screen(); // draw the calculator layout
+    sprintf(datalogtxt,"RPNV %s DATALOG - %s",VERSION,_asctime(&time_of_day,buf));
+    fprintf(fp,datalogtxt);
+    fprintf(fp,"Calc buttons pressed, meaning and stack or calc error, if any\n");
+    fprintf(fp,"BUTTON\tMEAN\tX:\t\t\tY:\t\t\tZ:\t\t\tT:\t\t\tLastX:\n");
+}
 
-    init_mouse();
-
-    show_mouse();
-
-    double_speed_mouse();
-
-    update_curpos(NOMOVE);   // move button cursor to defaul position - ENTER key
-
-    update_lcd();       // update the lcd screen with starting value
-
-    while (result >= 0) result = main_loop();        // main calc loop
-
-    hide_mouse();
-
-    closure_steps();    // return to default video mode
-
-    fclose(fp);
+void update_datalog(int curpos)
+{
+    if (curpos!=0) {
+	fprintf(fp,"%i%s\t%s\t% 1.*E\t% 1.*E\t% 1.*E\t% 1.*E\t% 1.*E\n",
+		    curpos,
+		    (second_f?" 2ndF":""),
+		    (second_f?butt_2ndF[curpos-1]:butt_base[curpos-1]),
+		    MAXDIGITS,stack[0],
+		    MAXDIGITS,stack[1],
+		    MAXDIGITS,stack[2],
+		    MAXDIGITS,stack[3],
+		    MAXDIGITS,lastx); // populate log file 
+    }
 }

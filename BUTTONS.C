@@ -42,7 +42,6 @@ void hit_button_at_curpos(int curpos)
 // for the majority of the buttons the behaviour depends if second f function has been just hit
 // or, in case of numbers buttons, if STO and RCL buttons have been just hit
 {
-    if ((buttonslog) && (curpos!=0)) fprintf(fp,"%i\n",curpos);
     switch (curpos) {
 	case 1:  // sqrt(x) / x^2
 	    if (store_hit) store_hit = false;
@@ -52,7 +51,8 @@ void hit_button_at_curpos(int curpos)
 		if (stack[0]>=0.0) {
 		    lastx = stack[0];
 		    stack[0] = sqrt(stack[0]);
-		    pull_stack();
+		    //pull_stack();
+		    if (enter_hit) enter_hit = false;
 		    func_hit = true; 
 		    update_lcd();
 		} else {
@@ -62,7 +62,8 @@ void hit_button_at_curpos(int curpos)
 	    else {
 		lastx = stack[0];
 		stack[0] = pow(stack[0],2.0);
-		pull_stack();
+		//pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		second_f = false; 
 		update_lcd(); 
@@ -75,7 +76,8 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		lastx = stack[0];
 		stack[0] = exp(stack[0]);
-		pull_stack();
+		//pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true; 
 		update_lcd(); 
 	    }
@@ -83,7 +85,8 @@ void hit_button_at_curpos(int curpos)
 		if (stack[0]>=0.0) { 
 		    lastx = stack[0];
 		    stack[0] = log(stack[0]);
-		    pull_stack();
+		    //pull_stack();
+		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
 		    update_lcd(); 
@@ -100,7 +103,8 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		lastx = stack[0];
 		stack[0] = pow(10.0,stack[0]);
-		pull_stack();
+		//pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true; 
 		update_lcd(); 
 	    }
@@ -108,7 +112,8 @@ void hit_button_at_curpos(int curpos)
 		if (stack[0]>=0.0) { 
 		    lastx = stack[0];
 		    stack[0] = log10(stack[0]);
-		    pull_stack();
+		    //pull_stack();
+		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
 		    update_lcd(); 
@@ -126,6 +131,7 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		stack[0] = pow(stack[1],stack[0]);
 		pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true; 
 		update_lcd(); 
 	    }
@@ -141,7 +147,8 @@ void hit_button_at_curpos(int curpos)
 		if (stackx_exp_hit==true) stackx_by_exp();
 		lastx = stack[0];
 		stack[0] = 1.0 / stack[0];
-		pull_stack();
+		//pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true; 
 		update_lcd(); 
 	    }
@@ -156,11 +163,12 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		if (stackx_exp_hit==true) stackx_exp *= -1;
 		else stack[0] = stack[0] * -1.0;
-		number_hit = true;
+		if (!func_hit && !enter_hit) number_hit = true;
 	    }
 	    else {
 		push_stack();
 		stack[0] = M_PI;
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		second_f = false;
 	    }
@@ -241,6 +249,7 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		stack[0] = stack[1]/stack[0];
 		pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
 	    } else {
@@ -255,6 +264,7 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		stack[0] = stack[1]/100.0*stack[0];
 		pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
 	    } else {
@@ -273,7 +283,8 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		convert_ang();
 		stack[0] = sin(stack[0]);
-		pull_stack();
+		//pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
 	    }
@@ -282,7 +293,8 @@ void hit_button_at_curpos(int curpos)
 		    lastx = stack[0];
 		    stack[0] = asin(stack[0]);
 		    back_convert_ang();
-		    pull_stack();
+		    //pull_stack();
+		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
 		    update_lcd();
@@ -300,7 +312,8 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		convert_ang();
 		stack[0] = cos(stack[0]);
-		pull_stack();
+		//pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
 	    }
@@ -309,7 +322,8 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		    stack[0] = acos(stack[0]);
 		    back_convert_ang(); 
-		    pull_stack();
+		    //pull_stack();
+		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
 		    update_lcd();
@@ -333,7 +347,8 @@ void hit_button_at_curpos(int curpos)
 		back_convert_ang(); 
 		second_f = false;
 	    }
-	    pull_stack();
+	    //pull_stack();
+	    if (enter_hit) enter_hit = false;
 	    func_hit = true;
 	    update_lcd();
 	    break;
@@ -355,6 +370,7 @@ void hit_button_at_curpos(int curpos)
 		if (stack[0]>=0.0) {
 		    if (stack[0]>0.0) stack[0] = factorial(stack[0]);
 		    else stack[0]=1.0;
+		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
 		    update_lcd();
@@ -432,6 +448,7 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0]; 
 		stack[0] = stack[1]*stack[0];
 		pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
 	    } else {
@@ -477,6 +494,7 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		stack[0] = 0.0;
 		stackx_dec = false;
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
 	    }
@@ -497,6 +515,7 @@ void hit_button_at_curpos(int curpos)
 	    else {
 		push_stack();
 		stack[0] = lastx;
+		if (enter_hit) enter_hit = false;
 		second_f = false;
 		func_hit = true;
 	    }
@@ -567,6 +586,7 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0]; 
 		stack[0] = stack[1]-stack[0];
 		pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
 	    } else {
@@ -605,6 +625,7 @@ void hit_button_at_curpos(int curpos)
 	    } else {
 		lastx = stack[0];
 		stack[0] = (int)stack[0];
+		if (enter_hit) enter_hit = false;
 		second_f = false;
 		func_hit = true;
 		update_lcd();
@@ -622,6 +643,7 @@ void hit_button_at_curpos(int curpos)
 	    } else {
 		lastx = stack[0];
 		stack[0] = stack[0] - (int)stack[0];
+		if (enter_hit) enter_hit = false;
 		second_f = false;
 		func_hit = true; 
 		update_lcd(); 
@@ -655,7 +677,7 @@ void hit_button_at_curpos(int curpos)
 		    stack[0] = 0.0;
 		    stackx_digit = 1;
 		    stackx_dec_digit = 0;
-		    enter_hit = false;
+		    if (enter_hit) enter_hit = false;
 		    stackx_dec = true;
 		} 
 		else if (func_hit) {
@@ -684,6 +706,7 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0]; 
 		stack[0] = stack[1]+stack[0];
 		pull_stack();
+		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
 	    } else {
@@ -692,4 +715,5 @@ void hit_button_at_curpos(int curpos)
 	    } 
 	    break;
     }
+    update_datalog(curpos);
 }

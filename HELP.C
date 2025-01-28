@@ -63,8 +63,8 @@ void show_help()   // HELP window if H is pressed
     _outtext("  S --> STOre in register  R --> ReCaLl from register \n"); 
     _outtext("  P --> \343                  F --> second function     \n");
     _outtext("  E --> EEX add 10^ exp.                              \n\n"); 
-    _outtext("   Launching with 'log' option writes data.log file   \n");
-    _outtext("        with all calculator buttons keystrokes        \n\n");
+    _outtext("   A data.log file is created with all calc buttons   \n");
+    _outtext("   pressed, their meaning, stack plus errors if any   \n\n");
     _outtext("      Not all functions have been implemented yet     \n");
 
     getch();

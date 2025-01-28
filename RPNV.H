@@ -44,10 +44,12 @@
 #include <stdbool.h>
 #include <string.h>
 #include <i86.h>
+#include <errno.h>
+#include <time.h>
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.7"
+#define VERSION "0.9.8"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -79,7 +81,6 @@ int stackx_digit = 0;  // total number of digits in stack X
 int stackx_dec_digit = 0; // number of decimal digits in stack X
 int stackx_exp = 0; // 10^ exponent of stackx value
 int stackx_exp_digit = 0; // numer of digit inserted in stackx_exp
-bool buttonslog = false; // track if datalog of button pressed has to be written
 bool stackx_dec = false; // true = decimal number ; false = integer
 bool stackx_exp_hit = false; // track if EEX button has been just pressed
 bool enter_hit = false; // track if ENTER has been just hit
@@ -90,12 +91,27 @@ bool disp_mode_hit = false; // track if FIX or SCI or ENG has been just hit
 bool number_hit = false; // track if a number has been just hit
 bool second_f = false; // track if f second function button has been just hit
 bool show_stack = false; // track if the stack has to be show when LCD is updated
+char *butt_base[] = {"\373x","e^x","10^x","y^x","1/x","CHS","7","8","9","\366", 
+		     "%","GTO","SIN","COS","TAN","EEX","4","5","6","*",
+		     "R/S","SST","R\031","x\035y","CLx","ENTER","1","2","3","-",
+		     "ON","2ndF","P/R","STO","RCL","ENTER","0",".","\344+","+"};
+char *butt_2ndF[] = {"x\375","LN","LOG","\032H.MS","\032H","\343","FIX","SCI","ENG","x\363y", 
+		     "\032R","\032P","SIN-1","COS-1","TAN-1","x!","DEG","RAD","GRD","x=0",
+		     "PSE","BST","PRGM","REG","PREFX","Lastx","1","2","3","-",
+		     "HELP","","MEM","INT","FRC","Lastx","x","s","\344-","\032DEG"};
+
 FILE *fp; // pointer to buttonslog file
+
+
 
 /*************** Functions declaration ***************/
 
 // In main.c 
 void main();
+
+// In datalog.c
+void start_datalog();
+void update_datalog(int);
 
 // In mainloop.c - main loop called by main function
 // this is the main loop tracking the key pressed by the user and addressing actions
