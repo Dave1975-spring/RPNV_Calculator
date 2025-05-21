@@ -47,7 +47,7 @@ int main_loop()  // this is the main loop tracking the key pressed by the user
 
     if (mouse_left) {
 	hit_button_at_curpos(mouse_position(mouse_x,mouse_y));
-	delay(250);  // give sum time to unpress the mouse button ...
+	delay(500);  // give sum time to unpress the mouse button ...
     }
 
     if (kbhit()) {
