@@ -37,9 +37,9 @@
 
 #include "rpnv.h"
 
-double sp_gamma(double z)
-// gamma function according to Spouge's approximation
-// as implemented @ rosettacode.org
+double factorial(double z)
+// factorial based on gamma function according to Spouge's approximation
+// adapted from as implemented @ rosettacode.org
 {
     const int a = A;  // see #define statement 
     static double c_space[A];
@@ -61,12 +61,7 @@ double sp_gamma(double z)
 	accm += c[k] / (z+k);
     }
     accm *= exp(-(z+a)) * pow(z+a, z+0.5); // gamma(z+1)
-    return accm/z;
-}
-
-double factorial(double number)
-{
-    return number * sp_gamma(number);
+    return accm;
 }
 
 void convert_ang()
