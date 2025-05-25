@@ -49,7 +49,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.8"
+#define VERSION "0.9.10"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -90,6 +90,7 @@ bool recall_hit = false; // track if the RCL button has been just hit
 bool disp_mode_hit = false; // track if FIX or SCI or ENG has been just hit
 bool number_hit = false; // track if a number has been just hit
 bool second_f = false; // track if f second function button has been just hit
+bool second_f_datalog = false; // keep track if second f button for datalog purpouse only 
 bool show_stack = false; // track if the stack has to be show when LCD is updated
 char *butt_base[] = {"\373x","e^x","10^x","y^x","1/x","CHS","7","8","9","\366", 
 		     "%","GTO","SIN","COS","TAN","EEX","4","5","6","*",
@@ -98,7 +99,7 @@ char *butt_base[] = {"\373x","e^x","10^x","y^x","1/x","CHS","7","8","9","\366",
 char *butt_2ndF[] = {"x\375","LN","LOG","\032H.MS","\032H","\343","FIX","SCI","ENG","x\363y", 
 		     "\032R","\032P","SIN-1","COS-1","TAN-1","x!","DEG","RAD","GRD","x=0",
 		     "PSE","BST","PRGM","REG","PREFX","Lastx","1","2","3","-",
-		     "HELP","","MEM","INT","FRC","Lastx","x","s","\344-","\032DEG"};
+		     "HELP","2ndF","MEM","INT","FRC","Lastx","x","s","\344-","\032DEG"};
 
 FILE *fp; // pointer to buttonslog file
 

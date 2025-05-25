@@ -58,10 +58,10 @@ void start_datalog()
 void update_datalog(int curpos)
 {
     if (curpos!=0) {
-	fprintf(fp,"%i%s\t%s\t% 1.*E\t% 1.*E\t% 1.*E\t% 1.*E\t% 1.*E\n",
+	fprintf(fp,"%i\t%s\t% 1.*E\t% 1.*E\t% 1.*E\t% 1.*E\t% 1.*E\n",
 		    curpos,
-		    (second_f?" 2ndF":""),
-		    (second_f?butt_2ndF[curpos-1]:butt_base[curpos-1]),
+//                    (second_f_datalog?" 2ndF":""),
+		    (second_f_datalog?butt_2ndF[curpos-1]:butt_base[curpos-1]),
 		    MAXDIGITS,stack[0],
 		    MAXDIGITS,stack[1],
 		    MAXDIGITS,stack[2],

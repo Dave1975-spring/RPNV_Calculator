@@ -39,33 +39,33 @@
 
 void show_help()   // HELP window if H is pressed
 {
-    char *firstrow;
+    char firstrow[59];
 
-    sprintf(firstrow," RPNV %s is an RPN calc inspired by HP Voyager calc\n",VERSION);
+    sprintf(firstrow,"  RPNV %s is an RPN calc inspired by HP Voyager calc\n",VERSION);
 
-    _settextwindow(1,13,25,68);
+    _settextwindow(1,11,25,70);
     _setbkcolor(5);
     _settextcolor(15); 
     _clearscreen(_GWINDOW); 
 
     _settextposition(2,1);
     _outtext(firstrow);
-    _outtext("     Made for fun by Davide Erbetta in 2024-2025      \n"); 
-    _outtext(" Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
-    _outtext("        -> See README and LICENSE documents <-        \n\n"); 
-    _outtext("                      INSTRUCTIONS                    \n\n");
-    _outtext("   Use arrow keys and SPACE bar to select the button  \n");
-    _outtext("         or use the mouse and the left button         \n\n");
-    _outtext("      Some shortcuts from keyboard are available:     \n");
-    _outtext("  All numbers + - / * . ENTER key can be used         \n");
-    _outtext("  T --> roTaTe stack R\031    K --> toggle show stack    \n");
-    _outtext("  L --> recall last X      M --> show registers       \n");
-    _outtext("  S --> STOre in register  R --> ReCaLl from register \n"); 
-    _outtext("  P --> \343                  F --> second function     \n");
-    _outtext("  E --> EEX add 10^ exp.                              \n\n"); 
-    _outtext("   A data.log file is created with all calc buttons   \n");
-    _outtext("   pressed, their meaning, stack plus errors if any   \n\n");
-    _outtext("      Not all functions have been implemented yet     \n");
+    _outtext("        Made for fun by Davide Erbetta in 2024-2025      \n"); 
+    _outtext("    Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
+    _outtext("           -> See README and LICENSE documents <-        \n\n"); 
+    _outtext("                         INSTRUCTIONS                    \n\n");
+    _outtext("      Use arrow keys and SPACE bar to select the button  \n");
+    _outtext("            or use the mouse and the left button         \n\n");
+    _outtext("         Some shortcuts from keyboard are available:     \n");
+    _outtext("     All numbers + - / * . ENTER key can be used         \n");
+    _outtext("     T --> roTaTe stack R\031    K --> toggle show stack    \n");
+    _outtext("     L --> recall last X      M --> show registers       \n");
+    _outtext("     S --> STOre in register  R --> ReCaLl from register \n"); 
+    _outtext("     P --> \343                  F --> second function     \n");
+    _outtext("     E --> EEX add 10^ exp.                              \n\n"); 
+    _outtext("      A data.log file is created with all calc buttons   \n");
+    _outtext("      pressed, their meaning, stack plus errors if any   \n\n");
+    _outtext("         Not all functions have been implemented yet     ");
 
     getch();
     init_calc_screen();

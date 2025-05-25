@@ -116,11 +116,11 @@ int mouse_position(int mouse_x, int mouse_y)
     mouse_pos = mouse_row * 10 + mouse_col;
 
     // special case for ENTER button, occupying also space between rows 3 and 4
-
     if ((mouse_x >= 42) && (mouse_x <= 46) && (mouse_y == 19)) mouse_pos = 26; 
 
     if (mouse_pos < 0) mouse_pos = 0; // if negative, so no button, then set to zero;
     if (mouse_pos == 36) second_f = false; // no second function for buttons 36
+    if ((mouse_pos == 32) && (mouse_y == 20)) mouse_pos = 0; // no second function for 2ndF button
 
     return mouse_pos;
 }

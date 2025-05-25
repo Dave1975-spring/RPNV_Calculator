@@ -63,5 +63,6 @@ void main(int argc, char *argv[])
 
     closure_steps();    // return to default video mode
 
+    fprintf(fp,"END LOG FILE");
     fclose(fp);
 }

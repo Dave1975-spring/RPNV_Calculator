@@ -42,6 +42,7 @@ void hit_button_at_curpos(int curpos)
 // for the majority of the buttons the behaviour depends if second f function has been just hit
 // or, in case of numbers buttons, if STO and RCL buttons have been just hit
 {
+    second_f_datalog = second_f; // store second_f value for datalog purpouse
     switch (curpos) {
 	case 1:  // sqrt(x) / x^2
 	    if (store_hit) store_hit = false;
