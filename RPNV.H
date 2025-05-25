@@ -49,7 +49,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.10"
+#define VERSION "0.9.11"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
