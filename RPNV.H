@@ -49,7 +49,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.11"
+#define VERSION "0.9.12"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -98,7 +98,7 @@ char *butt_base[] = {"\373x","e^x","10^x","y^x","1/x","CHS","7","8","9","\366",
 		     "ON","2ndF","P/R","STO","RCL","ENTER","0",".","\344+","+"};
 char *butt_2ndF[] = {"x\375","LN","LOG","\032H.MS","\032H","\343","FIX","SCI","ENG","x\363y", 
 		     "\032R","\032P","SIN-1","COS-1","TAN-1","x!","DEG","RAD","GRD","x=0",
-		     "PSE","BST","PRGM","REG","PREFX","Lastx","1","2","3","-",
+		     "PSE","BST","PRGM","REG","PREFX","Lastx","x,r","y,r","L.R.","\032RAD",
 		     "HELP","2ndF","MEM","INT","FRC","Lastx","x","s","\344-","\032DEG"};
 
 FILE *fp; // pointer to buttonslog file
@@ -136,6 +136,8 @@ void update_curpos(int dir); //
 // all maths functions, except the simplest
 double sp_gamma(double z);
 double factorial(double number);
+double rad_to_deg(double n);
+double deg_to_rad(double n);
 void convert_ang();
 void back_convert_ang();
 

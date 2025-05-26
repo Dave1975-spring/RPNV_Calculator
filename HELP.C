@@ -41,7 +41,7 @@ void show_help()   // HELP window if H is pressed
 {
     char firstrow[59];
 
-    sprintf(firstrow,"  RPNV %s is an RPN calc inspired by HP Voyager calc\n",VERSION);
+    sprintf(firstrow,"   RPNV %s is an RPN calc inspired by HP Voyager calc\n",VERSION);
 
     _settextwindow(1,11,25,70);
     _setbkcolor(5);

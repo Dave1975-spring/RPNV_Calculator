@@ -52,7 +52,6 @@ void hit_button_at_curpos(int curpos)
 		if (stack[0]>=0.0) {
 		    lastx = stack[0];
 		    stack[0] = sqrt(stack[0]);
-		    //pull_stack();
 		    if (enter_hit) enter_hit = false;
 		    func_hit = true; 
 		    update_lcd();
@@ -63,7 +62,6 @@ void hit_button_at_curpos(int curpos)
 	    else {
 		lastx = stack[0];
 		stack[0] = pow(stack[0],2.0);
-		//pull_stack();
 		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		second_f = false; 
@@ -77,7 +75,6 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		lastx = stack[0];
 		stack[0] = exp(stack[0]);
-		//pull_stack();
 		if (enter_hit) enter_hit = false;
 		func_hit = true; 
 		update_lcd(); 
@@ -86,7 +83,6 @@ void hit_button_at_curpos(int curpos)
 		if (stack[0]>=0.0) { 
 		    lastx = stack[0];
 		    stack[0] = log(stack[0]);
-		    //pull_stack();
 		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
@@ -104,7 +100,6 @@ void hit_button_at_curpos(int curpos)
 	    if (second_f==false) {
 		lastx = stack[0];
 		stack[0] = pow(10.0,stack[0]);
-		//pull_stack();
 		if (enter_hit) enter_hit = false;
 		func_hit = true; 
 		update_lcd(); 
@@ -113,7 +108,6 @@ void hit_button_at_curpos(int curpos)
 		if (stack[0]>=0.0) { 
 		    lastx = stack[0];
 		    stack[0] = log10(stack[0]);
-		    //pull_stack();
 		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
@@ -148,7 +142,6 @@ void hit_button_at_curpos(int curpos)
 		if (stackx_exp_hit==true) stackx_by_exp();
 		lastx = stack[0];
 		stack[0] = 1.0 / stack[0];
-		//pull_stack();
 		if (enter_hit) enter_hit = false;
 		func_hit = true; 
 		update_lcd(); 
@@ -284,7 +277,6 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		convert_ang();
 		stack[0] = sin(stack[0]);
-		//pull_stack();
 		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
@@ -294,7 +286,6 @@ void hit_button_at_curpos(int curpos)
 		    lastx = stack[0];
 		    stack[0] = asin(stack[0]);
 		    back_convert_ang();
-		    //pull_stack();
 		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
@@ -313,7 +304,6 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		convert_ang();
 		stack[0] = cos(stack[0]);
-		//pull_stack();
 		if (enter_hit) enter_hit = false;
 		func_hit = true;
 		update_lcd();
@@ -323,7 +313,6 @@ void hit_button_at_curpos(int curpos)
 		lastx = stack[0];
 		    stack[0] = acos(stack[0]);
 		    back_convert_ang(); 
-		    //pull_stack();
 		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
@@ -348,7 +337,6 @@ void hit_button_at_curpos(int curpos)
 		back_convert_ang(); 
 		second_f = false;
 	    }
-	    //pull_stack();
 	    if (enter_hit) enter_hit = false;
 	    func_hit = true;
 	    update_lcd();
@@ -591,8 +579,12 @@ void hit_button_at_curpos(int curpos)
 		func_hit = true;
 		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
+		lastx = stack[0];
+		stack[0] = deg_to_rad(stack[0]);
+		if (enter_hit) enter_hit = false;
+		func_hit = true;
 		second_f = false; 
+		update_lcd();
 	    } 
 	    break;
 	case 31: // ON / HELP
@@ -711,8 +703,12 @@ void hit_button_at_curpos(int curpos)
 		func_hit = true;
 		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
+		lastx = stack[0];
+		stack[0] = rad_to_deg(stack[0]);
+		if (enter_hit) enter_hit = false;
+		func_hit = true;
 		second_f = false; 
+		update_lcd(); 
 	    } 
 	    break;
     }

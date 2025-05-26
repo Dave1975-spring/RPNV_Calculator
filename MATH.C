@@ -64,10 +64,20 @@ double factorial(double z)
     return accm;
 }
 
+double rad_to_deg(double n)
+{
+    return n / M_PI * 180.0;
+}
+
+double deg_to_rad(double n)
+{
+    return n * M_PI / 180.0;
+}
+
 void convert_ang()
 {
     switch (ang_mode) {
-	case 0: stack[0] = stack[0] * M_PI / 180.0; break;
+	case 0: stack[0] = deg_to_rad(stack[0]); break;
 	case 1: break;
 	case 2: stack[0] = stack[0] * M_PI / 200.0; break;
     }
@@ -76,7 +86,7 @@ void convert_ang()
 void back_convert_ang()
 {
     switch (ang_mode) {
-	case 0: stack[0] = stack[0] / M_PI * 180.0; break;
+	case 0: stack[0] = rad_to_deg(stack[0]); break;
 	case 1: break;
 	case 2: stack[0] = stack[0] / M_PI * 200.0; break;
     }
