@@ -49,7 +49,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.12"
+#define VERSION "0.9.13"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -136,10 +136,12 @@ void update_curpos(int dir); //
 // all maths functions, except the simplest
 double sp_gamma(double z);
 double factorial(double number);
+void pol_to_rec();
+void rec_to_pol();
 double rad_to_deg(double n);
 double deg_to_rad(double n);
-void convert_ang();
-void back_convert_ang();
+void convert_ang(int s);
+void back_convert_ang(int s);
 
 // In mem.c
 // all functions related to memory managed, stack, registers, etc 

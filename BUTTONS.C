@@ -251,7 +251,7 @@ void hit_button_at_curpos(int curpos)
 		second_f = false; 
 	    } 
 	    break;
-	case 11: // % / 
+	case 11: // % / ->RECT
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false;
 	    if (second_f==false) {
@@ -262,12 +262,29 @@ void hit_button_at_curpos(int curpos)
 		func_hit = true;
 		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
-		second_f = false; 
+		lastx = stack[0];
+		convert_ang(1);
+		pol_to_rec();
+		if (enter_hit) enter_hit = false;
+		func_hit = true;
+		second_f = false;
+		update_lcd(); 
 	    } 
 	    break;
-	case 12: 
-	    print_message(14,"Not yet implemented");
+	case 12: // GTO / ->POLAR
+	    if (store_hit) store_hit = false; 
+	    if (recall_hit) recall_hit = false;
+	    if (second_f==false) {
+		print_message(14,"Not yet implemented");
+	    } else {
+		lastx = stack[0];
+		rec_to_pol(1);
+		back_convert_ang(1);
+		if (enter_hit) enter_hit = false;
+		func_hit = true;
+		second_f = false;
+		update_lcd(); 
+	    } 
 	    break;
 	case 13: // SIN / ASIN
 	    if (store_hit) store_hit = false; 
@@ -275,7 +292,7 @@ void hit_button_at_curpos(int curpos)
 	    if (stackx_exp_hit==true) stackx_by_exp();
 	    if (second_f == false) {
 		lastx = stack[0];
-		convert_ang();
+		convert_ang(0);
 		stack[0] = sin(stack[0]);
 		if (enter_hit) enter_hit = false;
 		func_hit = true;
@@ -285,7 +302,7 @@ void hit_button_at_curpos(int curpos)
 		if ((stack[0]>=-1.0 && stack[0]<=1.0)) {
 		    lastx = stack[0];
 		    stack[0] = asin(stack[0]);
-		    back_convert_ang();
+		    back_convert_ang(0);
 		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
@@ -302,7 +319,7 @@ void hit_button_at_curpos(int curpos)
 	    if (stackx_exp_hit==true) stackx_by_exp();
 	    if (second_f == false) {
 		lastx = stack[0];
-		convert_ang();
+		convert_ang(0);
 		stack[0] = cos(stack[0]);
 		if (enter_hit) enter_hit = false;
 		func_hit = true;
@@ -312,7 +329,7 @@ void hit_button_at_curpos(int curpos)
 		if ((stack[0]>=-1.0 && stack[0]<=1.0)) { 
 		lastx = stack[0];
 		    stack[0] = acos(stack[0]);
-		    back_convert_ang(); 
+		    back_convert_ang(0); 
 		    if (enter_hit) enter_hit = false;
 		    func_hit = true;
 		    second_f = false; 
@@ -329,12 +346,12 @@ void hit_button_at_curpos(int curpos)
 	    if (stackx_exp_hit==true) stackx_by_exp();
 	    lastx = stack[0];
 	    if (second_f == false) {
-		convert_ang();
+		convert_ang(0);
 		stack[0] = tan(stack[0]);
 	    }
 	    else {
 		stack[0] = atan(stack[0]);
-		back_convert_ang(); 
+		back_convert_ang(0); 
 		second_f = false;
 	    }
 	    if (enter_hit) enter_hit = false;
@@ -567,7 +584,7 @@ void hit_button_at_curpos(int curpos)
 		second_f = false; 
 	    } 
 	    break;
-	case 30: // -
+	case 30: // - / ->RAD
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -691,7 +708,7 @@ void hit_button_at_curpos(int curpos)
 	case 39:
 	    print_message(14,"Not yet implemented");
 	    break; 
-	case 40: // +
+	case 40: // + / ->DEG
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) { 

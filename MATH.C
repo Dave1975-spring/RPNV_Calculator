@@ -64,6 +64,24 @@ double factorial(double z)
     return accm;
 }
 
+void rec_to_pol()
+{
+    double x,y;
+    x = stack[0];
+    y = stack[1];
+    stack[0] = sqrt(pow(x,2) + pow(y,2));
+    stack[1] = atan(y/x);
+}
+
+void pol_to_rec()
+{
+    double r,t;
+    r = stack[0];
+    t = stack[1];
+    stack[0] = r * cos(t);
+    stack[1] = r * sin(t);
+}
+
 double rad_to_deg(double n)
 {
     return n / M_PI * 180.0;
@@ -74,21 +92,21 @@ double deg_to_rad(double n)
     return n * M_PI / 180.0;
 }
 
-void convert_ang()
+void convert_ang(int s)
 {
     switch (ang_mode) {
-	case 0: stack[0] = deg_to_rad(stack[0]); break;
+	case 0: stack[s] = deg_to_rad(stack[s]); break;
 	case 1: break;
-	case 2: stack[0] = stack[0] * M_PI / 200.0; break;
+	case 2: stack[s] = stack[s] * M_PI / 200.0; break;
     }
 }
 
-void back_convert_ang()
+void back_convert_ang(int s)
 {
     switch (ang_mode) {
-	case 0: stack[0] = rad_to_deg(stack[0]); break;
+	case 0: stack[s] = rad_to_deg(stack[s]); break;
 	case 1: break;
-	case 2: stack[0] = stack[0] / M_PI * 200.0; break;
+	case 2: stack[s] = stack[s] / M_PI * 200.0; break;
     }
 }
 
