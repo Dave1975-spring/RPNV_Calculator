@@ -118,7 +118,7 @@ void hit_button_at_curpos(int curpos)
 		}
 	    }
 	    break; 
-	case 4:  // y^x /
+	case 4:  // y^x / ->HMS
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -131,11 +131,15 @@ void hit_button_at_curpos(int curpos)
 		update_lcd(); 
 	    }
 	    else {
-		print_message(14,"Not yet implemented");
-		second_f = false; 
+		lastx = stack[0];
+		stack[0] = H_to_HMS(stack[0]);
+		if (enter_hit) enter_hit = false;
+		func_hit = true;
+		second_f = false;
+		update_lcd(); 
 	    }
 	    break;
-	case 5:  // 1/x / 
+	case 5:  // 1/x / ->H
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -147,8 +151,12 @@ void hit_button_at_curpos(int curpos)
 		update_lcd(); 
 	    }
 	    else {
-		print_message(14,"Not yet implemented");
-		second_f = false; 
+		lastx = stack[0];
+		stack[0] = HMS_to_H(stack[0]);
+		if (enter_hit) enter_hit = false;
+		func_hit = true;
+		second_f = false;
+		update_lcd(); 
 	    }
 	    break;
 	case 6:  // CHS / PI

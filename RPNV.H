@@ -49,7 +49,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.13"
+#define VERSION "0.9.14"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -138,6 +138,8 @@ double sp_gamma(double z);
 double factorial(double number);
 void pol_to_rec();
 void rec_to_pol();
+double H_to_HMS(double n);
+double HMS_to_H(double h1);
 double rad_to_deg(double n);
 double deg_to_rad(double n);
 void convert_ang(int s);

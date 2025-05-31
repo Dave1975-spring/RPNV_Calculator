@@ -82,6 +82,27 @@ void pol_to_rec()
     stack[1] = r * sin(t);
 }
 
+double H_to_HMS(double h1)
+{
+    double h2,m1,m2,s; // h = hours, m = minutes, s = seconds
+    h2 = (int)h1;
+    m1 = (h1 - h2) * 60.0;
+    m2 = (int)m1;
+    s  = (m1 - m2) * 60.0;
+    return h2 + m2 / 100.0 + s / 10000.0;
+}
+
+double HMS_to_H(double h1)
+{
+    double h2,ms1,ms2,m,s;
+    h2 = (int)h1;
+    ms1 = (h1 - h2) * 100.0;
+    m = (int)ms1;
+    s = ms1 - m;
+    ms2 = m + s * 100.0 / 60.0;
+    return h2 + ms2 / 60.0;
+}
+
 double rad_to_deg(double n)
 {
     return n / M_PI * 180.0;
