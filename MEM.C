@@ -166,4 +166,6 @@ void clear_memory()
 {
     int i;
     for (i=0; i<10; i++) memory[i] = 0.0;
+    for (i=0; i<4; i++) stack[i] = 0.0; 
+    lastx = 0.0;
 }

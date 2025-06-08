@@ -489,7 +489,7 @@ void hit_button_at_curpos(int curpos)
 		second_f = false; 
 	    } 
 	    break;
-	case 24: // x<>y / clear Registers 0-9
+	case 24: // x<>y / clear Registers 0-9, stack, lastx
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -667,7 +667,7 @@ void hit_button_at_curpos(int curpos)
 		update_lcd(); 
 	    } 
 	    break; 
-	case 37: // 0
+	case 37: // 0 / mean(x) and mean(y)
 	    if (second_f==false) { 
 		if (store_hit==true) store_memory(0); 
 		else if (recall_hit==true) recall_memory(0); 
@@ -682,11 +682,18 @@ void hit_button_at_curpos(int curpos)
 		}
 		update_lcd(); 
 	    } else {
-		print_message(14,"Not yet implemented");
-		second_f = false; 
+		if (memory[0]!=0.0) {
+		    lastx = stack[0];
+		    mean_x_y();
+		    enter_hit = true; // stack behaves as when enter is just it
+		    func_hit = false;
+		    second_f = false; 
+		    update_lcd(); 
+		} 
+		else print_message(6,"Error 2: n=0 "); 
 	    } 
 	    break;
-	case 38: // .
+	case 38: // . / stddev(x) and stddev(y)
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) { 
@@ -709,12 +716,33 @@ void hit_button_at_curpos(int curpos)
 		number_hit = true;
 		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
-		second_f = false; 
+		if (memory[0]!=0.0) { 
+		    lastx = stack[0];
+		    stddev_x_y();
+		    enter_hit = true; // stack behaves as when enter is just it
+		    func_hit = false;
+		    second_f = false; 
+		    update_lcd(); 
+		} else print_message(6,"Error 2: n=0 "); 
 	    } 
 	    break;
-	case 39:
-	    print_message(14,"Not yet implemented");
+	case 39: // SIGMA+ / SIGMA-
+	    if (store_hit) store_hit = false; 
+	    if (recall_hit) recall_hit = false; 
+	    if (second_f==false) {
+		lastx = stack[0]; 
+		sigma_plus();
+		enter_hit = true; // stack behaves as when enter is just it
+		func_hit = false;
+		update_lcd();
+	    } else {
+		lastx = stack[0];
+		sigma_minus();
+		enter_hit = true; // stack behaves as when enter is just it
+		func_hit = false;
+		second_f = false; 
+		update_lcd(); 
+	    } 
 	    break; 
 	case 40: // + / ->DEG
 	    if (store_hit) store_hit = false; 

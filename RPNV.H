@@ -49,7 +49,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.14"
+#define VERSION "0.9.15"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -144,6 +144,9 @@ double rad_to_deg(double n);
 double deg_to_rad(double n);
 void convert_ang(int s);
 void back_convert_ang(int s);
+void sigma_plus();
+void sigma_minus();
+void mean_x_y();
 
 // In mem.c
 // all functions related to memory managed, stack, registers, etc 

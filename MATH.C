@@ -131,3 +131,38 @@ void back_convert_ang(int s)
     }
 }
 
+void sigma_plus()
+{ // according to HP-10C owner's handbook
+    memory[0] = memory[0] + 1.0;
+    memory[1] = memory[1] + stack[0];
+    memory[2] = memory[2] + pow(stack[0],2);
+    memory[3] = memory[3] + stack[1];
+    memory[4] = memory[4] + pow(stack[1],2);
+    stack[0] = memory[0];
+}
+
+void sigma_minus()
+{ // according to HP-10C owner's handbook
+    memory[0] = memory[0] - 1.0;
+    memory[1] = memory[1] - stack[0];
+    memory[2] = memory[2] - pow(stack[0],2);
+    memory[3] = memory[3] - stack[1];
+    memory[4] = memory[4] - pow(stack[1],2);
+    stack[0] = memory[0];
+}
+
+void mean_x_y()
+{ // according to HP-10C owner's handbook
+    push_stack();
+    push_stack();
+    stack[0] = memory[1] / memory[0];
+    stack[1] = memory[3] / memory[0];
+}
+
+void stddev_x_y()
+{ // according to HP-10C owner's handbook
+    push_stack();
+    push_stack();
+    stack[0] = sqrt( (memory[0]*memory[2]-pow(memory[1],2)) / (memory[0]*(memory[0]-1.0)) );
+    stack[1] = sqrt( (memory[0]*memory[4]-pow(memory[3],2)) / (memory[0]*(memory[0]-1.0)) ); 
+}
