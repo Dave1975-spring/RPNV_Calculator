@@ -166,3 +166,17 @@ void stddev_x_y()
     stack[0] = sqrt( (memory[0]*memory[2]-pow(memory[1],2)) / (memory[0]*(memory[0]-1.0)) );
     stack[1] = sqrt( (memory[0]*memory[4]-pow(memory[3],2)) / (memory[0]*(memory[0]-1.0)) ); 
 }
+
+double int_part(double x)
+{
+    double integer,fract;
+    fract = modf(x,&integer);
+    return integer;
+}
+
+double fract_part(double x)
+{
+    double integer,fract;
+    fract = modf(x,&integer);
+    return fract;
+}

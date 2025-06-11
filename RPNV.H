@@ -49,7 +49,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.15"
+#define VERSION "0.9.16"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -147,6 +147,9 @@ void back_convert_ang(int s);
 void sigma_plus();
 void sigma_minus();
 void mean_x_y();
+void stddev_x_y();
+double int_part(double x);
+double fract_part(double x);
 
 // In mem.c
 // all functions related to memory managed, stack, registers, etc 

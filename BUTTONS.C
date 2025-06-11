@@ -642,7 +642,7 @@ void hit_button_at_curpos(int curpos)
 		update_lcd_badge();
 	    } else {
 		lastx = stack[0];
-		stack[0] = (int)stack[0];
+		stack[0] = int_part(stack[0]);
 		if (enter_hit) enter_hit = false;
 		second_f = false;
 		func_hit = true;
@@ -660,7 +660,7 @@ void hit_button_at_curpos(int curpos)
 		update_lcd_badge();
 	    } else {
 		lastx = stack[0];
-		stack[0] = stack[0] - (int)stack[0];
+		stack[0] = fract_part(stack[0]);
 		if (enter_hit) enter_hit = false;
 		second_f = false;
 		func_hit = true; 
