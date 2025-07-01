@@ -3,7 +3,7 @@
 
 wcl *.c 
 
-# the resulting .exe file is the file to run (not necessarely is named rpnv.exe).
+# the resulting .exe file is the executable file to run the program (not necessarely is named rpnv.exe).
 # In FreeDOS, after installing OpenWATCOM C Compiler 1.9, prior to compiling command, 
 # the environemnt has to be setup by running the file "owsetenv.bat" in the OpenWatcom directory,
 #
