@@ -28,6 +28,8 @@
  * - Jim Hall for his great tutorials on C and CONIO
  * - Shawn Hargreaves for his great FED text editor
  * - "root42" for his very usefull MS-DOS programming tutorial
+ * - Liamtoh Resu for the several tests done and bugs highlighted
+ * - Albert Chan for his help in understand & correct the DMS<>DD bug
  *
  ****************************************************************************
  *
@@ -38,6 +40,7 @@
 /*************** INCLUDE STATEMENTS ***************/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <conio.h>
 #include <graph.h>
 #include <math.h>
@@ -49,7 +52,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.16"
+#define VERSION "0.9.17"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -96,10 +99,10 @@ char *butt_base[] = {"\373x","e^x","10^x","y^x","1/x","CHS","7","8","9","\366",
 		     "%","GTO","SIN","COS","TAN","EEX","4","5","6","*",
 		     "R/S","SST","R\031","x\035y","CLx","ENTER","1","2","3","-",
 		     "ON","2ndF","P/R","STO","RCL","ENTER","0",".","\344+","+"};
-char *butt_2ndF[] = {"x\375","LN","LOG","\032H.MS","\032H","\343","FIX","SCI","ENG","x\363y", 
-		     "\032R","\032P","SIN-1","COS-1","TAN-1","x!","DEG","RAD","GRD","x=0",
-		     "PSE","BST","PRGM","REG","PREFX","Lastx","x,r","y,r","L.R.","\032RAD",
-		     "HELP","2ndF","MEM","INT","FRC","Lastx","x","s","\344-","\032DEG"};
+char *butt_2ndF[] = {"x\375","LN","LOG","\257H.MS","\257H","\343","FIX","SCI","ENG","x\363y", 
+		     "\257R","\257P","SIN-1","COS-1","TAN-1","x!","DEG","RAD","GRD","x=0",
+		     "PSE","BST","PRGM","REG","PREFX","Lastx","x,r","y,r","L.R.","\257RAD",
+		     "HELP","2ndF","MEM","INT","FRC","Lastx","x","s","\344-","\257DEG"};
 
 FILE *fp; // pointer to buttonslog file
 

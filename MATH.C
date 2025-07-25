@@ -28,6 +28,8 @@
  * - Jim Hall for his great tutorials on C and CONIO
  * - Shawn Hargreaves for his great FED text editor
  * - "root42" for his very usefull MS-DOS programming tutorial
+ * - Liamtoh Resu for the several tests done and bugs highlighted
+ * - Albert Chan for his help in understand & correct the DMS<>DD bug
  *
  ****************************************************************************
  *
@@ -84,24 +86,55 @@ void pol_to_rec()
 
 double H_to_HMS(double h1)
 {
-    double h2,m1,m2,s; // h = hours, m = minutes, s = seconds
-    h2 = (int)h1;
+    double h2,m1,m2,s,buffer; // h = hours, m = minutes, s = seconds
+    //h2 = (int)h1;
+    buffer = modf(h1,&h2);
     m1 = (h1 - h2) * 60.0;
-    m2 = (int)m1;
+    //m2 = (int)m1;
+    buffer = modf(m1,&m2);
     s  = (m1 - m2) * 60.0;
     return h2 + m2 / 100.0 + s / 10000.0;
 }
 
-double HMS_to_H(double h1)
+double HMS_to_H(double hms)
 {
-    double h2,ms1,ms2,m,s;
-    h2 = (int)h1;
-    ms1 = (h1 - h2) * 100.0;
-    m = (int)ms1;
-    s = ms1 - m;
-    ms2 = m + s * 100.0 / 60.0;
-    return h2 + ms2 / 60.0;
+    char *hms_string; // to store the MAXDIGITS relevant digits of the X register
+    int sgn,dec; // used in ecvt function to store sign and decimal point position
+
+    double h = 0; // to store hours only value from hms_string
+    double m = 0; // to store minutes only value from hms_string
+    double s = 0; // to store seconds and seconds decimals value from hms_string
+
+    // OPTION 1 - based on HMS STRING PARSING
+    int i = 0; // counter to parse HMS string
+    int j = 1; // counter to create seconds value 
+    hms_string = ecvt(hms,MAXDIGITS,&dec,&sgn);     // extract the MAXDIGITS from double to a string
+    while (i<=(dec-1)) h = h * 10.0 + (hms_string[i++] - 48);      // create value for hours only
+    while (i<=(dec+1)) m = m * 10.0 + (hms_string[i++] - 48);     // create value for minutes only
+    while (i<=(MAXDIGITS-1)) s = s + pow(10,j--) * (hms_string[i++] - 48);     // create value for seconds and its decimals
+    return (h + (m + s / 60.0) / 60.0) * (sgn==0?1.0:-1.0);
+
+/*
+    // OPTION 2 - based on converting back HMS STRING to DOUBLE and MODF
+    // suggested by Albert Chan
+    double buffer,hms2 = 0;
+    hms_string = ecvt(hms,MAXDIGITS,&dec,&sgn);
+    hms2 = strtod(hms_string, NULL) * pow(10,dec-MAXDIGITS+4);
+    buffer = modf(hms2/100.0,&m);
+    buffer = modf(hms2/10000.0,&s);
+    h = hms2 - 40 * (m + 60*s) ;
+    return h / 3600.0 * (sgn==0?1.0:-1.0);
+
+    // OPTION 3 - based on converting back HMS STRING and INTEGER MANTISSA
+    // suggested by Albert Chan
+    m = strtod(ecvt(hms,MAXDIGITS,&dec,&sgn), NULL);
+    s = pow(10, MAXDIGITS-dec-4);
+    m -= s*40.0*(floor(m/(100*s)) + 60*floor(m/(10000*s)));
+    return m / (3600*s) * (sgn ? -1 : 1);
+*/
+
 }
+
 
 double rad_to_deg(double n)
 {

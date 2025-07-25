@@ -28,6 +28,8 @@
  * - Jim Hall for his great tutorials on C and CONIO
  * - Shawn Hargreaves for his great FED text editor
  * - "root42" for his very usefull MS-DOS programming tutorial
+ * - Liamtoh Resu for the several tests done and bugs highlighted
+ * - Albert Chan for his help in understand & correct the DMS<>DD bug
  *
  ****************************************************************************
  *
