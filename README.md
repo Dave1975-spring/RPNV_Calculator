@@ -13,7 +13,7 @@ If you have any comment or whatever feel free to send to me a note.
 
 ### Special thanks to: 
 - [FreeDOS](https://freedos.org/) Development Team for this great OS
-- Jim Hall for his great tutorials on C and CONIO
+- [Jim Hall](https://freedos.org/jhall/) for his great tutorials on C and CONIO
 - [Shawn Hargreaves](https://shawnhargreaves.com/fed/) for his great FED text Editor
 - ["root42"](https://www.youtube.com/@root42) for his very usefull MS-DOS programming tutorials
 - [Liamtoh Resu](https://www.hpmuseum.org/forum/user-13332.html) for the several tests done and bugs highlighted
