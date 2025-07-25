@@ -12,9 +12,9 @@ There could be some bugs in the code, so it should no be used for any valuable c
 If you have any comment or whatever feel free to send to me a note.
 
 ### Special thanks to: 
-- FreeDOS Development Team for this great OS
+- [FreeDOS](https://freedos.org/) Development Team for this great OS
 - Jim Hall for his great tutorials on C and CONIO
-- Shawn Hargreaves for his great FED text Editor
+- [Shawn Hargreaves](https://shawnhargreaves.com/fed/) for his great FED text Editor
 - "root42" for his very usefull MS-DOS programming tutorials
 - [Liamtoh Resu](https://www.hpmuseum.org/forum/user-13332.html) for the several tests done and bugs highlighted
 - [Albert Chan](https://www.hpmuseum.org/forum/user-9024.html) for his help in understand and correct the DMS<>DD conversion bug
