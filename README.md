@@ -16,7 +16,7 @@ If you have any comment or whatever feel free to send to me a note.
 - Jim Hall for his great tutorials on C and CONIO
 - Shawn Hargreaves for his great FED text Editor
 - "root42" for his very usefull MS-DOS programming tutorials
-- Liamtoh Resu for the several tests done and bugs highlighted
+- [Liamtoh Resu]([url](https://www.hpmuseum.org/forum/user-13332.html)) for the several tests done and bugs highlighted
 - [Albert Chan]([url](https://www.hpmuseum.org/forum/user-9024.html)) for his help in understand and correct the DMS<>DD conversion bug
 
 ### WHAT HAS BEEN IMPLEMENTED AND WHAT IS NOT:
