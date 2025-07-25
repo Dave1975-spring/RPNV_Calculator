@@ -17,7 +17,7 @@ If you have any comment or whatever feel free to send to me a note.
 - Shawn Hargreaves for his great FED text Editor
 - "root42" for his very usefull MS-DOS programming tutorials
 - Liamtoh Resu for the several tests done and bugs highlighted
-- Albert Chan for his help in understand and correct the DMS<>DD conversion bug
+- [Albert Chan]([url](https://www.hpmuseum.org/forum/user-9024.html)) for his help in understand and correct the DMS<>DD conversion bug
 
 ### WHAT HAS BEEN IMPLEMENTED AND WHAT IS NOT:
 
