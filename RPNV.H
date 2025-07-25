@@ -52,7 +52,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.17"
+#define VERSION "0.9.18"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
