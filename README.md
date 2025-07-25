@@ -9,6 +9,7 @@ It is coded in C, in FreeDos, using FED text editor and Open Watcom C 1.9 compil
 It has been made for fun, for my personal amusement in making a C code using Conio library in the FreeDos environment. 
 There's no intent to make whatever a high quality RPN calculator. So only some basic functions have been implemented, other may be implemented in the future.
 There could be some bugs in the code, so it should no be used for any valuable calculation work. 
+
 _Of course it's released without any kind of warranty as stated in the LICENSE file._
 
 If you have any comment or whatever feel free to send to me a note.
