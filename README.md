@@ -15,7 +15,9 @@ If you have any comment or whatever feel free to send to me a note.
 - FreeDOS Development Team for this great OS
 - Jim Hall for his great tutorials on C and CONIO
 - Shawn Hargreaves for his great FED text Editor
-- "root42" for his very usefull MS-DOS programming tutorials.
+- "root42" for his very usefull MS-DOS programming tutorials
+- Liamtoh Resu for the several tests done and bugs highlighted
+- Albert Chan for his help in understand and correct the DMS<>DD conversion bug
 
 ### WHAT HAS BEEN IMPLEMENTED AND WHAT IS NOT:
 
