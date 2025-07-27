@@ -43,7 +43,7 @@ void show_help()   // HELP window if H is pressed
 {
     char firstrow[59];
 
-    sprintf(firstrow,"   RPNV %s is an RPN calc inspired by HP Voyager calc\n",VERSION);
+    sprintf(firstrow,"     RPNV %s is an RPN calc inspired by HP-10C calc  \n",VERSION);
 
     _settextwindow(1,11,25,70);
     _setbkcolor(5);
@@ -57,8 +57,7 @@ void show_help()   // HELP window if H is pressed
     _outtext("           -> See README and LICENSE documents <-        \n\n"); 
     _outtext("                         INSTRUCTIONS                    \n\n");
     _outtext("      Use arrow keys and SPACE bar to select the button  \n");
-    _outtext("            or use the mouse and the left button         \n\n");
-    _outtext("         Some shortcuts from keyboard are available:     \n");
+    _outtext("    or use the mouse + left button or keyboard shortcuts:\n\n");
     _outtext("     All numbers + - / * . ENTER key can be used         \n");
     _outtext("     T --> roTaTe stack R\031    K --> toggle show stack    \n");
     _outtext("     L --> recall last X      M --> show registers       \n");
@@ -67,7 +66,8 @@ void show_help()   // HELP window if H is pressed
     _outtext("     E --> EEX add 10^ exp.                              \n\n"); 
     _outtext("      A data.log file is created with all calc buttons   \n");
     _outtext("      pressed, their meaning, stack plus errors if any   \n\n");
-    _outtext("         Not all functions have been implemented yet     ");
+    _outtext("      For fuctions behaviour refeer to HP-10C manual.    \n");
+    _outtext("           No programming capability implemented");
 
     getch();
     init_calc_screen();

@@ -67,4 +67,5 @@ void main(int argc, char *argv[])
 
     fprintf(fp,"END LOG FILE");
     fclose(fp);
+    printf("RPNV Calculator version %s.\n",VERSION);
 }

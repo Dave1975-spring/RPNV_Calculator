@@ -171,6 +171,7 @@ void sigma_plus()
     memory[2] = memory[2] + pow(stack[0],2);
     memory[3] = memory[3] + stack[1];
     memory[4] = memory[4] + pow(stack[1],2);
+    memory[5] = memory[5] + stack[0] * stack[1];
     stack[0] = memory[0];
 }
 
@@ -181,6 +182,7 @@ void sigma_minus()
     memory[2] = memory[2] - pow(stack[0],2);
     memory[3] = memory[3] - stack[1];
     memory[4] = memory[4] - pow(stack[1],2);
+    memory[5] = memory[5] - stack[0] * stack[1];
     stack[0] = memory[0];
 }
 
@@ -198,6 +200,42 @@ void stddev_x_y()
     push_stack();
     stack[0] = sqrt( (memory[0]*memory[2]-pow(memory[1],2)) / (memory[0]*(memory[0]-1.0)) );
     stack[1] = sqrt( (memory[0]*memory[4]-pow(memory[3],2)) / (memory[0]*(memory[0]-1.0)) ); 
+}
+
+void linear_regression()
+{ // according to HP-10C owner's handbook
+    double den = (memory[0] * memory[2] - pow(memory[1],2));
+    // y = A * x + B
+    // B in stack[0] = X register
+    stack[0] = (memory[3] * memory[2] - memory[1] * memory[5]) / den;
+    // A in stack[1] = Y register
+    stack[1] = (memory[0] * memory[5] - memory[1] * memory[3]) / den;
+}
+
+void correlation_coefficient()
+{
+    // Pearson's correlation coefficient 
+    stack[1] = (memory[0]*memory[5]-memory[1]*memory[3]);
+    stack[1] /= sqrt(memory[0]*memory[2]-pow(memory[1],2));
+    stack[1] /= sqrt(memory[0]*memory[4]-pow(memory[3],2));
+}
+
+void estimation_correlation_y()
+{
+    double x = stack[0];
+    push_stack(); 
+    linear_regression();
+    stack[0] = x * stack[1] + stack[0];
+    correlation_coefficient();
+}
+
+void estimation_correlation_x()
+{
+    double y = stack[0];
+    push_stack(); 
+    linear_regression();
+    stack[0] = (y - stack[0]) / stack[1];
+    correlation_coefficient();
 }
 
 double int_part(double x)

@@ -537,7 +537,7 @@ void hit_button_at_curpos(int curpos)
 	    }
 	    update_lcd();
 	    break;
-	case 27: // 1
+	case 27: // 1 / Estimation of X and Correlation Coefficient
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(1); 
 		else if (recall_hit==true) recall_memory(1); 
@@ -552,11 +552,17 @@ void hit_button_at_curpos(int curpos)
 		}
 		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
-		second_f = false; 
+		if (memory[0]!=0.0) { 
+		    lastx = stack[0];
+		    estimation_correlation_x();
+		    enter_hit = true; // stack behaves as when enter is just it
+		    func_hit = false;
+		    second_f = false; 
+		    update_lcd(); 
+		} else print_message(6,"Error 2: n=0 "); 
 	    } 
 	    break;
-	case 28: // 2
+	case 28: // 2 / Estimation of Y and Correlation Coefficient
 	    if (second_f==false) {
 		if (store_hit==true) store_memory(2); 
 		else if (recall_hit==true) recall_memory(2); 
@@ -571,11 +577,17 @@ void hit_button_at_curpos(int curpos)
 		}
 		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
-		second_f = false; 
+		if (memory[0]!=0.0) { 
+		    lastx = stack[0];
+		    estimation_correlation_y();
+		    enter_hit = true; // stack behaves as when enter is just it
+		    func_hit = false;
+		    second_f = false; 
+		    update_lcd(); 
+		} else print_message(6,"Error 2: n=0 "); 
 	    } 
 	    break;
-	case 29: // 3
+	case 29: // 3 / Linear Regression
 	    if (second_f==false) { 
 		if (store_hit==true) store_memory(3); 
 		else if (recall_hit==true) recall_memory(3); 
@@ -590,8 +602,15 @@ void hit_button_at_curpos(int curpos)
 		}
 		update_lcd();
 	    } else {
-		print_message(14,"Not yet implemented");
-		second_f = false; 
+		if (memory[0]!=0.0) { 
+		    lastx = stack[0];
+		    push_stack();
+		    linear_regression();
+		    enter_hit = true; // stack behaves as when enter is just it
+		    func_hit = false;
+		    second_f = false; 
+		    update_lcd(); 
+		} else print_message(6,"Error 2: n=0 "); 
 	    } 
 	    break;
 	case 30: // - / ->RAD

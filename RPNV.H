@@ -52,7 +52,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.18"
+#define VERSION "0.9.19"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -151,6 +151,10 @@ void sigma_plus();
 void sigma_minus();
 void mean_x_y();
 void stddev_x_y();
+void linear_regression();
+void correlation_coefficient();
+void estimation_correlation_y();
+void estimation_correlation_x();
 double int_part(double x);
 double fract_part(double x);
 
