@@ -66,7 +66,7 @@ void show_help()   // HELP window if H is pressed
     _outtext("     E --> EEX add 10^ exp.                              \n\n"); 
     _outtext("      A data.log file is created with all calc buttons   \n");
     _outtext("      pressed, their meaning, stack plus errors if any   \n\n");
-    _outtext("      For fuctions behaviour refeer to HP-10C manual.    \n");
+    _outtext("       For fuctions behaviour refer to HP-10C manual.    \n");
     _outtext("           No programming capability implemented");
 
     getch();
