@@ -34,12 +34,14 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 - all numbers can be used
 - all the four basic operation: + - * /
 - the ENTER key works as the ENTER button on the calculator
+- BACKSPACE clear the display (X register)
 - K switches on and off the show of the stack content beside the LCD display
 - T rotates the stack value
 - L recalls the value from the Last-X register
 - M shows the content of the memory registers from 0 to 9
 - S stores the current value from stack X to a memory register from 0 to 9
-- C recalls the value from a memory register from 0 to 9 and place it in the stack X register
+- R recalls the value from a memory register from 0 to 9 and place it in the stack X register
+- C change sign
 - P recalls the pi-greek value
 - F toggles the F second function
 - E for EEX function
