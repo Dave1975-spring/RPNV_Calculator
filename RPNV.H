@@ -52,7 +52,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "0.9.19"
+#define VERSION "0.9.20"
 #define LOGFILE "data.log"
 #define offset_col 7
 #define offset_row 8
@@ -84,6 +84,8 @@ int stackx_digit = 0;  // total number of digits in stack X
 int stackx_dec_digit = 0; // number of decimal digits in stack X
 int stackx_exp = 0; // 10^ exponent of stackx value
 int stackx_exp_digit = 0; // numer of digit inserted in stackx_exp
+int storage_arith = 0; // store operation to be performed working with storage
+		       // 0=none 1=+ 2=- 3=* 4=/
 bool stackx_dec = false; // true = decimal number ; false = integer
 bool stackx_exp_hit = false; // track if EEX button has been just pressed
 bool enter_hit = false; // track if ENTER has been just hit
@@ -92,6 +94,7 @@ bool store_hit = false; // track if the STO button has been just hit
 bool recall_hit = false; // track if the RCL button has been just hit
 bool disp_mode_hit = false; // track if FIX or SCI or ENG has been just hit
 bool number_hit = false; // track if a number has been just hit
+bool prefix_hit = false; // track if PREFIX function has been just hit
 bool second_f = false; // track if f second function button has been just hit
 bool second_f_datalog = false; // keep track if second f button for datalog purpouse only 
 bool show_stack = false; // track if the stack has to be show when LCD is updated

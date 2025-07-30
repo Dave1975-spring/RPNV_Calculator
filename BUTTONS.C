@@ -245,7 +245,10 @@ void hit_button_at_curpos(int curpos)
 	    } 
 	    break;
 	case 10: // /
-	    if (store_hit) store_hit = false; 
+	    if (store_hit==true) { 
+		storage_arith = 4; 
+		break;
+	    } 
 	    if (recall_hit) recall_hit = false;
 	    if (second_f==false) {
 		if (stackx_exp_hit==true) stackx_by_exp();
@@ -457,7 +460,10 @@ void hit_button_at_curpos(int curpos)
 	    } 
 	    break;
 	case 20: // * 
-	    if (store_hit) store_hit = false; 
+	    if (store_hit==true) { 
+		storage_arith = 3; 
+		break;
+	    } 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
 		if (stackx_exp_hit==true) stackx_by_exp();
@@ -504,7 +510,7 @@ void hit_button_at_curpos(int curpos)
 	    }
 	    update_lcd();
 	    break; 
-	case 25: // CLx / 
+	case 25: // CLx / PREFIX 
 	    if (store_hit) store_hit = false; 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
@@ -515,8 +521,12 @@ void hit_button_at_curpos(int curpos)
 		update_lcd();
 	    }
 	    else {
-		print_message(14,"Not yet implemented");
-		second_f = false; 
+		if (store_hit) store_hit = false; 
+		if (recall_hit) recall_hit = false; 
+		if (disp_mode_hit) disp_mode_hit = false;
+		second_f = false;
+		prefix_hit = true; 
+		update_lcd();
 	    }
 	    break;
 	case 26: case 36: // ENTER / LastX --> ensure identical code for case 36, still ENTER
@@ -614,7 +624,10 @@ void hit_button_at_curpos(int curpos)
 	    } 
 	    break;
 	case 30: // - / ->RAD
-	    if (store_hit) store_hit = false; 
+	    if (store_hit==true) { 
+		storage_arith = 2; 
+		break;
+	    } 
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) {
 		if (stackx_exp_hit==true) stackx_by_exp(); 
@@ -655,6 +668,7 @@ void hit_button_at_curpos(int curpos)
 	case 34: // STO / INT
 	    if (second_f==false) { 
 		if (stackx_exp_hit==true) stackx_by_exp();
+		storage_arith = 0;
 		if (store_hit==false) {
 		    store_hit = true;
 		    if (recall_hit) recall_hit = false;
@@ -766,7 +780,11 @@ void hit_button_at_curpos(int curpos)
 	    } 
 	    break; 
 	case 40: // + / ->DEG
-	    if (store_hit) store_hit = false; 
+	    // if (store_hit) store_hit = false; 
+	    if (store_hit==true) { 
+		storage_arith = 1; 
+		break;
+	    }
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) { 
 		if (stackx_exp_hit==true) stackx_by_exp();

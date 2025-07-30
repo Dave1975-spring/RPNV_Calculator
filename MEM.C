@@ -150,7 +150,14 @@ void show_memory()  // show the registers content
 
 void store_memory(int mempos)
 {
-    memory[mempos] = stack[0]; 
+    switch (storage_arith) {
+	case 0: { memory[mempos]  = stack[0]; break; }
+	case 1: { memory[mempos] += stack[0]; break; } 
+	case 2: { memory[mempos] -= stack[0]; break; } 
+	case 3: { memory[mempos] *= stack[0]; break; } 
+	case 4: { memory[mempos] /= stack[0]; break; } 
+    }
+    storage_arith = 0;
     store_hit = false;
     func_hit = true;
 }
@@ -159,7 +166,6 @@ void recall_memory(int mempos)
 {
     push_stack();
     stack[0] = memory[mempos]; 
-    //define_digits();
     recall_hit = false;
     func_hit = true;
 }

@@ -320,10 +320,11 @@ void update_lcd_badge()
 
 void update_lcd()
 {
-    char text_lcd[25];  // text to display the number
+    char *text_lcd; //[25];  // text to display the number
     char text_exp[5];   // text to display the exponential entry if EEX is pressed
     float mantissa;
     int counter = 0;
+    int sgn,dec; // used in ecvt function to store sign and decimal point position 
 
     // set the LCD area to be filled
 
@@ -334,6 +335,15 @@ void update_lcd()
     _settextposition(2,4); 
 
     // create the string to be shown in LCD
+
+    if (prefix_hit) {
+	prefix_hit = false; 
+	text_lcd = ecvt(stack[0],MAXDIGITS,&dec,&sgn);
+	_outtext(text_lcd);
+	delay(3000); 
+	_clearscreen(_GWINDOW);
+	_settextposition(2,4); 
+    }
 
     if ((number_hit) || (stackx_exp_hit)) {
 	if (stackx_dec) sprintf(text_lcd,"% #1.*Lf",stackx_dec_digit,stack[0]);
@@ -348,7 +358,7 @@ void update_lcd()
 	    sprintf(text_exp,"E%+04i",stackx_exp);
 	    _outtext(text_exp);
 	}
-    } 
+    }
     else {
 	switch (disp_mode) {
 	    case 0:     // FIX

@@ -71,6 +71,9 @@ int main_loop()  // this is the main loop tracking the key pressed by the user
 		    break; 
 	    } 
 	} else switch (c) {
+	    case  8: // BACKSPACE
+		hit_button_at_curpos(25);
+		break; 
 	    case 13: // ENTER
 		hit_button_at_curpos(26);
 		break; 
@@ -124,6 +127,9 @@ int main_loop()  // this is the main loop tracking the key pressed by the user
 	    case 57: // 9
 		hit_button_at_curpos(9); 
 		break;
+	    case 99: // c for CHS
+		hit_button_at_curpos(6);
+		break; 
 	    case 101: // e for EEX
 		second_f = false;
 		hit_button_at_curpos(16);
