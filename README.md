@@ -21,7 +21,7 @@ If you have any comment or whatever feel free to send to me a note.
 - [Liamtoh Resu](https://www.hpmuseum.org/forum/user-13332.html) for the several tests done and bugs highlighted
 - [Albert Chan](https://www.hpmuseum.org/forum/user-9024.html) for his help in understand and correct the DMS<>DD conversion bug
 
-### WHAT HAS BEEN IMPLEMENTED AND WHAT IS NOT:
+### WHAT HAS BEEN IMPLEMENTED AND WHAT HAS NOT:
 
 The calculator has a 4 level stack (X,Y,Z,T registers), the Last-X register and 10 memory registers (named from 0 to 9) where values can be stored and recall. All the basic operation, the trigonometric functions and statistical functions are available as well. No programming capability has been implemented, maybe in the future.
 
