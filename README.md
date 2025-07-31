@@ -23,7 +23,7 @@ If you have any comment or whatever feel free to send to me a note.
 
 ### WHAT HAS BEEN IMPLEMENTED AND WHAT HAS NOT:
 
-The calculator has a 4 level stack (X,Y,Z,T registers), the Last-X register and 10 memory registers (named from 0 to 9) where values can be stored and recall. All the basic operation, the trigonometric functions and statistical functions are available as well. No programming capability has been implemented, maybe in the future.
+The calculator has a 4 level stack (X,Y,Z,T registers), the Last-X register and 10 memory registers (named from 0 to 9) where values can be stored and recall. All the basic operations, the trigonometric functions and statistical functions available on HP-10C have been implemented. No programming capability has been implemented, maybe in the future.
 
 For functions behaviour please refer to HP-10C manual.
 
