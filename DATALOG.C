@@ -51,18 +51,18 @@ void start_datalog()
 
     fp = freopen(LOGFILE,"w",stderr);
 
+    // header rows
     sprintf(datalogtxt,"RPNV %s DATALOG - %s",VERSION,_asctime(&time_of_day,buf));
     fprintf(fp,datalogtxt);
     fprintf(fp,"Calc buttons pressed, meaning and stack or calc error, if any\n");
     fprintf(fp,"BUTTON\tMEAN\tX:\t\t\tY:\t\t\tZ:\t\t\tT:\t\t\tLastX:\n");
 }
 
-void update_datalog(int curpos)
+void update_datalog(int curpos) // ad a row at the data.log file at every calc button pressed
 {
     if (curpos!=0) {
 	fprintf(fp,"%i\t%s\t% 1.*E\t% 1.*E\t% 1.*E\t% 1.*E\t% 1.*E\n",
-		    curpos,
-//                    (second_f_datalog?" 2ndF":""),
+		    curpos_to_button[curpos],
 		    (second_f_datalog?butt_2ndF[curpos-1]:butt_base[curpos-1]),
 		    MAXDIGITS,stack[0],
 		    MAXDIGITS,stack[1],

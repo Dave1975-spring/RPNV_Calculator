@@ -41,31 +41,32 @@
 
 void main(int argc, char *argv[])
 { 
-    int result = 0;
+    int result = 0; // if !=0 calc keep running in mainloop() function, otherwise goes to end program
 
-    start_datalog();
+    read_statelog(); // read state.log file if available, otherwise initialize program list registers
 
-    initial_steps();    // set video mode
+    start_datalog(); // start logging of keypressed, stack values, etc.
+
+    initial_steps(); // set video mode
 
     init_calc_screen(); // draw the calculator layout
 
-    init_mouse();
+    init_mouse(); show_mouse(); double_speed_mouse(); // set mouse
 
-    show_mouse();
+    update_curpos(NOMOVE); // move button cursor to defaul position - ENTER key
 
-    double_speed_mouse();
+    update_lcd(); // update the lcd screen with starting value
 
-    update_curpos(NOMOVE);   // move button cursor to defaul position - ENTER key
+    while (result >= 0) result = main_loop(); // MAIN CALCULATOR LOOP
 
-    update_lcd();       // update the lcd screen with starting value
+    hide_mouse(); // reset mouse
 
-    while (result >= 0) result = main_loop();        // main calc loop
+    closure_steps(); // return to default video mode
 
-    hide_mouse();
-
-    closure_steps();    // return to default video mode
-
-    fprintf(fp,"END LOG FILE");
+    fprintf(fp,"END LOG FILE"); // end data log file
     fclose(fp);
-    printf("RPNV Calculator version %s.\n",VERSION);
+
+    save_statelog(); // save the content of memory registers and program list in state.log file to be read at next ON
+
+    printf("RPNV Calculator version %s.\n",VERSION); // on exit print on screen calculator version used.
 }

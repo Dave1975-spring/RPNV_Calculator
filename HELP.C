@@ -41,33 +41,33 @@
 
 void show_help()   // HELP window if H is pressed
 {
-    char firstrow[59];
+    char firstrow[70];
 
-    sprintf(firstrow,"     RPNV %s is an RPN calc inspired by HP-10C calc  \n",VERSION);
+    sprintf(firstrow,"            RPNV %s is an RPN calculator inspired by HP-10C\n",VERSION);
 
-    _settextwindow(1,11,25,70);
+    _settextwindow(2,3,24,78);
     _setbkcolor(5);
     _settextcolor(15); 
     _clearscreen(_GWINDOW); 
 
     _settextposition(2,1);
     _outtext(firstrow);
-    _outtext("        Made for fun by Davide Erbetta in 2024-2025      \n"); 
-    _outtext("    Developed in C in FreeDos with FED and OpewWatcom 1.9\n\n");
-    _outtext("           -> See README and LICENSE documents <-        \n\n"); 
-    _outtext("                         INSTRUCTIONS                    \n\n");
-    _outtext("      Use arrow keys and SPACE bar to select the button  \n");
-    _outtext("    or use the mouse + left button or keyboard shortcuts:\n\n");
-    _outtext("     All numbers + - / * . ENTER key can be used         \n");
-    _outtext("     T --> roTaTe stack R\031    K --> toggle show stack    \n");
-    _outtext("     L --> recall last X      M --> show registers       \n");
-    _outtext("     S --> STOre in register  R --> ReCaLl from register \n"); 
-    _outtext("     P --> \343                  F --> second function     \n");
-    _outtext("     E --> EEX add 10^ exp.   C --> CHS                  \n\n"); 
-    _outtext("      A data.log file is created with all calc buttons   \n");
-    _outtext("      pressed, their meaning, stack plus errors if any   \n\n");
-    _outtext("       For fuctions behaviour refer to HP-10C manual.    \n");
-    _outtext("           No programming capability implemented");
+    _outtext("                Made for fun by Davide Erbetta in 2024-2025              \n"); 
+    _outtext("       Developed in C in FreeDOS with FED editor and OpewWatcom 1.9      \n\n");
+    _outtext("                   -> See README and LICENSE documents <-                \n\n"); 
+    _outtext("       For fuctions behaviour and programming refer to HP-10C manual     \n");
+    _outtext("              Use arrow keys and SPACE bar to select the button          \n");
+    _outtext("            or use the mouse + left button or keyboard shortcuts:        \n\n");
+    _outtext("             All numbers + - / * . ENTER key can be used                 \n");
+    _outtext("             T --> roTaTe stack R\031    K --> toggle show stack            \n");
+    _outtext("             L --> recall last X      M --> show registers               \n");
+    _outtext("             S --> STOre in register  R --> ReCaLl from register         \n"); 
+    _outtext("             P --> \343                  F --> second function             \n");
+    _outtext("             E --> EEX add 10^ exp.   C --> CHS                          \n"); 
+    _outtext("             BACKSPACE --> CLX in EXEC mode, delete row in PRGM mode     \n\n"); 
+    _outtext("   A 'data.log' file is created with buttons pressed and stack values    \n");
+    _outtext(" A 'state.log' is created & read with stack, registers and program list  \n");
+    _outtext(" In PROGRAM mode, new lines are instered in the list instead of overriden");
 
     getch();
     init_calc_screen();

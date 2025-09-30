@@ -39,7 +39,7 @@
 
 #include "rpnv.h"
 
-void show_full_stack()
+void show_full_stack()  // show the stack values beside the calc display
 {
     char text_stack[35];
     _setbkcolor(7);
@@ -79,7 +79,7 @@ void show_full_stack()
     _outtext(text_stack);
 }
 
-void clear_full_stack() // clear the screen where the stack is shown
+void clear_full_stack() // hide the stack values beside the calc display
 {
     _setbkcolor(7);
     _settextwindow(2,45,6,77);
@@ -118,7 +118,67 @@ void swap_stackxy()
     stack[1] = buf;
 }
 
-void show_memory()  // show the registers content
+void show_prgm_list()  // show the program list content
+{
+    int i=0,j=0,k;
+    char text_prgm_row[70];
+    char text_pos[3][3];
+
+    _settextwindow(2,3,24,78);
+    _setbkcolor(1);
+    _settextcolor(7); 
+    _clearscreen(_GWINDOW); 
+
+    _settextposition(1,4);
+    sprintf(text_prgm_row,"Program index at: %2i        Last program row at: %2i",prgm_index,prgm_index_max);
+    _outtext(text_prgm_row);
+
+    _settextposition(2,4);
+    sprintf(text_prgm_row,"Program title: %s",prgm_title);
+    _outtext(text_prgm_row); 
+
+    for (j=0; j<4; j++) 
+	for (i=0; i<20; i++) {
+	    _settextposition(i+3,3+15*j); 
+	    k = i + j * 20;
+	    sprintf(text_prgm_row,"%02i- %2s %2s %2s \263",k,prgm_list[k][0],prgm_list[k][1],prgm_list[k][2]);
+	    _outtext(text_prgm_row);
+	} 
+
+    for (i=0; i<20; i++) {
+	_settextposition(i+3,63); 
+	k = i + 80;
+	sprintf(text_prgm_row,"%02i- %2s %2s %2s",k,prgm_list[k][0],prgm_list[k][1],prgm_list[k][2]);
+	_outtext(text_prgm_row);
+    } 
+
+    _settextposition(23,26);
+    _outtext("Press any key to continue");
+
+    getch();
+    init_calc_screen();
+    update_curpos(NOMOVE);
+    update_lcd();
+}
+
+void clear_prgm_list() // if no state.log file is available to be read, the program list is initialized
+{
+    int i;
+
+    strcpy(prgm_list[0][0],"  ");
+    strcpy(prgm_list[0][1],"  ");
+    strcpy(prgm_list[0][2],"  "); 
+
+    for (i=1;i<MAXPRGMLIST;i++) {
+	strcpy(prgm_list[i][0],"  ");
+	strcpy(prgm_list[i][1],"22");
+	strcpy(prgm_list[i][2],"00");
+    } 
+    prgm_index = FIRSTPRGMSTEP;
+    prgm_index_max = FIRSTPRGMSTEP;
+}
+
+void show_memory()  // show the registers (memory[0..9]) content
 {
     int i=0;
     char text_memory[28];
@@ -148,7 +208,7 @@ void show_memory()  // show the registers content
     update_lcd();
 }
 
-void store_memory(int mempos)
+void store_memory(int mempos) // store values in memory register, applying the selected artithmetic if it's the case
 {
     switch (storage_arith) {
 	case 0: { memory[mempos]  = stack[0]; break; }
@@ -157,8 +217,8 @@ void store_memory(int mempos)
 	case 3: { memory[mempos] *= stack[0]; break; } 
 	case 4: { memory[mempos] /= stack[0]; break; } 
     }
-    storage_arith = 0;
-    store_hit = false;
+    storage_arith = 0; // reset the arithmetic value (0 = not arithmetic selected)
+    store_hit = false; 
     func_hit = true;
 }
 
@@ -170,7 +230,7 @@ void recall_memory(int mempos)
     func_hit = true;
 }
 
-void clear_memory()
+void clear_memory() // clear the memory[0..9] registers and stack
 {
     int i;
     for (i=0; i<10; i++) memory[i] = 0.0;

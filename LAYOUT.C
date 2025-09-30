@@ -39,14 +39,14 @@
 
 #include "rpnv.h"
 
-void initial_steps()
+void initial_steps() // setup the screen
 {
     _setvideomode(_TEXTC80);
     _displaycursor(_GCURSOROFF);
     _clearscreen(_GCLEARSCREEN);
 }
 
-void closure_steps()
+void closure_steps() // back the screen to standard mode
 {
     _displaycursor(_GCURSORON);
     _setbkcolor(0);
@@ -55,7 +55,7 @@ void closure_steps()
     _setvideomode(_DEFAULTMODE);
 }
 
-void draw_border()
+void draw_border() // draw the calculator borders
 {
     int col;
     int row;
@@ -70,22 +70,19 @@ void draw_border()
     _settextposition(24,78);
     _outtext("\276");
 
-    for (row=8; row<24; row++)
-    {
+    for (row=8; row<24; row++) {
 	_settextposition(row,3);
 	_outtext("\263");
 	_settextposition(row,78);
 	_outtext("\263");
     } 
 
-    for (col=4; col<78; col++)
-    {
+    for (col=4; col<78; col++) {
 	_settextposition(7,col);
 	_outtext("\304");
     }
 
-    for (col=4; col<78; col++)
-    {
+    for (col=4; col<78; col++) {
 	_settextposition(24,col);
 	_outtext("\315");
     }
@@ -191,7 +188,7 @@ void draw_enter_button()
     _outtext("  R");
 }
 
-void init_calc_screen()
+void init_calc_screen() // draw the calculator layout, button, etc
 {
     // create black background
 
@@ -271,7 +268,7 @@ void init_calc_screen()
     draw_std_button(4,10," \032DEG","  +",""); 
 }
 
-void print_message(int color,char *message)
+void print_message(int color,char *message) // print messages at calc bottom, when needed
 {
     // print message at the bottom of the screen, last row
 
@@ -286,7 +283,7 @@ void print_message(int color,char *message)
     _clearscreen(_GWINDOW); 
 }
 
-void update_lcd_badge()
+void update_lcd_badge() // update just the badges in the calculator display
 {
     _setbkcolor(3);
     _settextcolor(0);
@@ -299,32 +296,36 @@ void update_lcd_badge()
     if (second_f==false) _outtext(" ");
     else _outtext("f"); 
 
-    _settextposition(1,5);
-    if (store_hit==false) _outtext("   ");
-    else _outtext("STO"); 
-
-    _settextposition(1,9);
-    if (recall_hit==false) _outtext("   ");
-    else _outtext("RCL"); 
+    _settextposition(1,7);
+    if (store_hit) _outtext("STO");
+    else if (recall_hit) _outtext("RCL");
+    else _outtext("   "); 
 
     // display angular mode
 
-    _settextposition(1,13);
+    _settextposition(1,12);
     _outtext(ang_mode_txt[ang_mode]); 
 
     // display DISP mode
 
-    _settextposition(1,19);
+    _settextposition(1,17);
     _outtext(disp_mode_txt[disp_mode]); 
+
+    // display CALC mode
+
+    _settextposition(1,22);
+    _outtext(calc_mode_txt[calc_mode]); 
+
 }
 
-void update_lcd()
+void update_lcd() // update the whole calculator display, including the badges area
 {
-    char *text_lcd; //[25];  // text to display the number
+    char text_lcd[25];  // text to display the number
     char text_exp[5];   // text to display the exponential entry if EEX is pressed
-    float mantissa;
-    int counter = 0;
-    int sgn,dec; // used in ecvt function to store sign and decimal point position 
+    char text_pos[3][3];
+    double mantissa; // used when ENG display mode is selected
+    int counter = 0; // used when ENG display mode is selected
+    int dec,sgn; // used in ecvt function
 
     // set the LCD area to be filled
 
@@ -334,11 +335,11 @@ void update_lcd()
     _clearscreen(_GWINDOW);
     _settextposition(2,4); 
 
-    // create the string to be shown in LCD
+    // create the string to be shown in LCD 
 
     if (prefix_hit) {
 	prefix_hit = false; 
-	text_lcd = ecvt(stack[0],MAXDIGITS,&dec,&sgn);
+	strcpy(text_lcd,ecvt(stack[0],MAXDIGITS,&dec,&sgn));
 	_outtext(text_lcd);
 	delay(3000); 
 	_clearscreen(_GWINDOW);
@@ -361,17 +362,17 @@ void update_lcd()
     }
     else {
 	switch (disp_mode) {
-	    case 0:     // FIX
+	    case 0:     // FIX display mode
 		if ( ((fabs(stack[0])<1.0E12) && (fabs(stack[0])>1.0E-12)) || (stack[0]==0.0) ) {
 		    if (stackx_dec) sprintf(text_lcd,"% #1.*Lf",disp_mode_dec_digit,stack[0]);
 		    else sprintf(text_lcd,"% 1.*Lf",disp_mode_dec_digit,stack[0]);
 		}
 		else sprintf(text_lcd,"% 1.*E",disp_mode_dec_digit,stack[0]);
 		break;
-	    case 1:     // SCI
+	    case 1:     // SCI display mode
 		sprintf(text_lcd,"% 1.*E",disp_mode_dec_digit,stack[0]);
 		break;
-	    case 2:     // ENG
+	    case 2:     // ENG display mode
 		mantissa = stack[0];
 		if (fabs(mantissa) > 1.0) {
 		    while (mantissa > 1.0E3) {
@@ -380,13 +381,13 @@ void update_lcd()
 		    }
 		} else {
 		    while (mantissa < 1.0 && mantissa!=0.0) {
-			mantissa = mantissa * 1E3;
+			mantissa = mantissa * 1.0E3;
 			counter--;
 		    }
 		}
 		sprintf(text_lcd,"% 1.*LfE%03i",disp_mode_dec_digit,mantissa,(counter*3));
 		break;
-	    default:    // Standard
+	    default:    // Standard display mode
 		if ( ((fabs(stack[0])<1.0E12) && (fabs(stack[0])>1.0E-12)) || (stack[0]==0.0) ) {
 		    if (stackx_dec) sprintf(text_lcd,"% #1.*Lf",stackx_dec_digit,stack[0]);
 		    else sprintf(text_lcd,"% 1.*Lf",stackx_dec_digit,stack[0]);
@@ -397,12 +398,19 @@ void update_lcd()
 	_outtext(text_lcd);
     }
 
+    if ((calc_mode==PRGM) && (prgm_index>=0)) { // display when in PROGRAM mode
+	_clearscreen(_GWINDOW); 
+	_settextposition(2,4);
+	sprintf(text_lcd,"%02i- %2s %2s %2s",prgm_index,prgm_list[prgm_index][0],prgm_list[prgm_index][1],prgm_list[prgm_index][2]);
+	_outtext(text_lcd); 
+    }
+
     update_lcd_badge(); // call function to update badge area
 
     if (show_stack) show_full_stack(); // show the stack + Last-x stack if requested
 }
 
-void update_curpos(int dir)
+void update_curpos(int dir) // move the calculator cursor when arrows are pressed
 {
     int cur_row,cur_col;
     int curposx,curposy;

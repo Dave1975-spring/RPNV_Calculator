@@ -84,21 +84,51 @@ void pol_to_rec()
     stack[1] = r * sin(t);
 }
 
+void HMS_to_H_M_S(double hms, double *h, double *m, double *s, int *sgn)
+{
+    char hms_string[MAXDIGITS+1]; // to store the MAXDIGITS relevant digits of the X register
+    int dec; // used in ecvt function to store sign and decimal point position
+    int i = 0; // counter to parse HMS string
+    int j = 1; // counter to create seconds value 
+
+    *h = 0;
+    *m = 0;
+    *s = 0;
+    strcpy(hms_string,ecvt(hms,MAXDIGITS,&dec,sgn));     // extract the MAXDIGITS from double to a string
+    while (i<=(dec-1)) *h = *h * 10.0 + (hms_string[i++] - 48);      // create value for hours only
+    while (i<=(dec+1)) *m = *m * 10.0 + (hms_string[i++] - 48);     // create value for minutes only
+    while (i<=(MAXDIGITS-1)) *s = *s + pow(10,j--) * (hms_string[i++] - 48);     // create value for seconds and its decimals
+}
+
 double H_to_HMS(double h1)
 {
-    double h2,m1,m2,s,buffer; // h = hours, m = minutes, s = seconds
-    //h2 = (int)h1;
-    buffer = modf(h1,&h2);
-    m1 = (h1 - h2) * 60.0;
-    //m2 = (int)m1;
-    buffer = modf(m1,&m2);
-    s  = (m1 - m2) * 60.0;
-    return h2 + m2 / 100.0 + s / 10000.0;
+    double hms,h,h2,m,m1,m2,m_60,s,s1,s_60,buffer; // h = hours, m = minutes, s = seconds
+    int sgn;
+
+    h2 = (int)h1; // extract the integer part of hours
+    m1 = (h1 - h2) * 60.0; // extract the minutes
+    m2 = (int)m1; // extract the integer part of minutes
+    s1  = (m1 - m2) * 60.0; // extract the seconds
+    hms = h2 + m2 / 100.0 + s1 / 10000.0;
+
+    // in some cases, due to rounding, the results could ne like x.5960 which is not uncorrect, but weird
+    // so let's pas the result to correct the weird results
+
+    HMS_to_H_M_S(hms,&h,&m,&s,&sgn); // extract h,m,s
+    modf((s/60.0),&s_60); // get number of times 60 seconds are included, typically 0, sometimes 1 when s = 60
+    s = s - s_60 * 60; // get the numner of secs < 60 secs
+    m = m + s_60; // increase by s_60 times, at max 1, the minutes
+    modf((m/60.0),&m_60);
+    m = m - m_60 * 60;
+    h = h + m_60;
+
+    return (h + m / 100.0 + s / 10000.0) * (sgn==0?1.0:-1.0);
 }
+
 
 double HMS_to_H(double hms)
 {
-    char *hms_string; // to store the MAXDIGITS relevant digits of the X register
+    char hms_string[MAXDIGITS+1]; // to store the MAXDIGITS relevant digits of the X register
     int sgn,dec; // used in ecvt function to store sign and decimal point position
 
     double h = 0; // to store hours only value from hms_string
@@ -106,12 +136,7 @@ double HMS_to_H(double hms)
     double s = 0; // to store seconds and seconds decimals value from hms_string
 
     // OPTION 1 - based on HMS STRING PARSING
-    int i = 0; // counter to parse HMS string
-    int j = 1; // counter to create seconds value 
-    hms_string = ecvt(hms,MAXDIGITS,&dec,&sgn);     // extract the MAXDIGITS from double to a string
-    while (i<=(dec-1)) h = h * 10.0 + (hms_string[i++] - 48);      // create value for hours only
-    while (i<=(dec+1)) m = m * 10.0 + (hms_string[i++] - 48);     // create value for minutes only
-    while (i<=(MAXDIGITS-1)) s = s + pow(10,j--) * (hms_string[i++] - 48);     // create value for seconds and its decimals
+    HMS_to_H_M_S(hms,&h,&m,&s,&sgn); // extract h,m,s
     return (h + (m + s / 60.0) / 60.0) * (sgn==0?1.0:-1.0);
 
 /*
@@ -164,8 +189,8 @@ void back_convert_ang(int s)
     }
 }
 
-void sigma_plus()
-{ // according to HP-10C owner's handbook
+void sigma_plus() // according to HP-10C owner's handbook
+{ 
     memory[0] = memory[0] + 1.0;
     memory[1] = memory[1] + stack[0];
     memory[2] = memory[2] + pow(stack[0],2);
@@ -175,8 +200,8 @@ void sigma_plus()
     stack[0] = memory[0];
 }
 
-void sigma_minus()
-{ // according to HP-10C owner's handbook
+void sigma_minus() // according to HP-10C owner's handbook
+{ 
     memory[0] = memory[0] - 1.0;
     memory[1] = memory[1] - stack[0];
     memory[2] = memory[2] - pow(stack[0],2);
@@ -186,16 +211,16 @@ void sigma_minus()
     stack[0] = memory[0];
 }
 
-void mean_x_y()
-{ // according to HP-10C owner's handbook
+void mean_x_y() // according to HP-10C owner's handbook
+{ 
     push_stack();
     push_stack();
     stack[0] = memory[1] / memory[0];
     stack[1] = memory[3] / memory[0];
 }
 
-void stddev_x_y()
-{ // according to HP-10C owner's handbook
+void stddev_x_y() // according to HP-10C owner's handbook
+{ 
     push_stack();
     push_stack();
     stack[0] = sqrt( (memory[0]*memory[2]-pow(memory[1],2)) / (memory[0]*(memory[0]-1.0)) );

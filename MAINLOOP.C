@@ -41,18 +41,32 @@
 
 int main_loop()  // this is the main loop tracking the key pressed by the user
 {
-    int c = 0;
+    int c = 0,i = 0;
     int mouse_x,mouse_y,mouse_left,mouse_right;
     char mouse_text[30];
 
-    get_mouse(&mouse_x,&mouse_y,&mouse_left,&mouse_right);
-
-    if (mouse_left) {
-	hit_button_at_curpos(mouse_position(mouse_x,mouse_y));
-	delay(500);  // give sum time to unpress the mouse button ...
+    if (calc_mode==EXEC) { // if in EXECution mode, run the program stored in prgm_list at prgm_index
+	if (!EXEC_PSE) { 
+	    exec_PRGM_row();  // if not in pause, exec the next row of program list
+	    if (prgm_index==FIRSTPRGMSTEP) { 
+		calc_mode = RUN;  // back to 00 or step finished, so end of the program
+		update_lcd_badge();
+	    }
+	}
+	else { // if in pause, check if it's time to continue to exec the program
+	    exec_pse_actual = time(NULL);
+	    if ((exec_pse_actual-exec_pse_initial)>=2) EXEC_PSE = false; // if at least 1 second has passed, pause is finished
+	}
     }
 
-    if (kbhit()) {
+    get_mouse(&mouse_x,&mouse_y,&mouse_left,&mouse_right); // get mouse position and click, if the case
+
+    if (mouse_left) {  // if mouse left button pressed, hit the corresponding calc button
+	hit_button_at_curpos(mouse_position(mouse_x,mouse_y));
+	delay(500);  // give sum time to unpress the mouse button and avoid undesired multiple click ...
+    }
+
+    if (kbhit()) { // check if PC keyboard has been pressed and in case hit the corresponding calc button
 	c = getch();
 	if ( c ==(char)0 ) {    // if special keys are pressed, as arrows
 	    c = getch();
@@ -72,12 +86,16 @@ int main_loop()  // this is the main loop tracking the key pressed by the user
 	    } 
 	} else switch (c) {
 	    case  8: // BACKSPACE
-		hit_button_at_curpos(25);
+		if (calc_mode==RUN) hit_button_at_curpos(25);
+		if (calc_mode==PRGM) {
+		    delete_PRGM_row();
+		    update_lcd();
+		}
 		break; 
 	    case 13: // ENTER
 		hit_button_at_curpos(26);
 		break; 
-	    case 27: // !!! ESC !!!
+	    case 27: // !!! ESC !!! ==>> RETURN -1, which stops the MAINLOOP and exit the calculator
 		return -1;
 	    case 32: // SPACE
 		hit_button_at_curpos(curpos);
@@ -173,8 +191,8 @@ int main_loop()  // this is the main loop tracking the key pressed by the user
 		hit_button_at_curpos(23);
 		break;
 	    default:
-		return 0;
+		return 0; // return 0, so continue the MAINLOOP loop
 	}
     }
-    return 0;
+    return 0; // return 0, so continue the MAINLOOP loop
 }
