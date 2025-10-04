@@ -20,6 +20,7 @@ If you have any comment or whatever feel free to send to me a note.
 - ["root42"](https://www.youtube.com/@root42) for his very usefull MS-DOS programming tutorials
 - [Liamtoh Resu](https://www.hpmuseum.org/forum/user-13332.html) for the several tests done and bugs highlighted
 - [Albert Chan](https://www.hpmuseum.org/forum/user-9024.html) for his help in understand and correct the DMS<>DD conversion bug
+- [Mike T.](https://github.com/mike632t), I have used the x11-calc HP-10C extensively as a benchmark to test the behavior of my RPNV calculator
 
 ### WHAT IS IMPLEMENTED:
 
@@ -54,5 +55,6 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 - P recalls the pi-greek value
 - F toggles the F second function
 - E for EEX function
+- ESC to quit the calculator
 
 ![Calc layout](https://github.com/user-attachments/assets/05ecbbef-787c-4fd0-afc1-cd8879086e32)
