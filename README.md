@@ -38,6 +38,7 @@ In addition:
 - A "data.log" file is written at every use, containing all calculator keystrokes, their meaning, the stack & last-x registers content at each button pressed
 - A "state.log" file is written at every use, containing stacks values, register values and program list. If the file is present in the same directory of the exectuable file, then it's also read at startup, so it can be used to load in the calculator memory the program or memory registers values of interest; just rename the ".log" file cointaing the data of interest as "state.log" before launching the calculator
 - In PROGRAM mode, differently from the real HP-10C, a new row of program is inserted, not overwriting the existing row
+- Added RAN# function, not available on the real HP-10C, returning a float number >=0 and <1
 
 ### HOW IT WORKS:
 
