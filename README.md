@@ -62,5 +62,5 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 
 ![Calc layout](https://github.com/user-attachments/assets/05ecbbef-787c-4fd0-afc1-cd8879086e32)
 
-<img width="1090" height="659" alt="Istantanea_2025-11-01_16-33-35" src="https://github.com/user-attachments/assets/e1f0dd61-78b6-4e90-87b2-1efb14a0222d" />
+
 
