@@ -7,6 +7,7 @@ RPNV is an RPN calculator inspired by HP Voyager calculator series, in particula
 It is coded in C, in FreeDOS, using FED text editor and Open Watcom C 1.9 compiler.
 
 It has been made for fun, for my personal amusement in making a C code using Conio library in the FreeDos environment. 
+All calculations are based on the compiler's float math library, there is no implementation of binary math.
 There's no intent to make whatever a high quality RPN calculator. There could be some bugs in the code, so it should not be used for any valuable calculation work. 
 
 _Of course it's released without any kind of warranty as stated in the LICENSE file._
