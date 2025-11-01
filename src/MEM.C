@@ -20,21 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- ****************************************************************************
- *
- * Special thanks to:
- * - FreeDOS development team
- * - Jim Hall for his great tutorials on C and CONIO
- * - Shawn Hargreaves for his great FED text editor
- * - "root42" for his very usefull MS-DOS programming tutorial
- * - Liamtoh Resu for the several tests done and bugs highlighted
- * - Albert Chan for his help in understand & correct the DMS<>DD bug
- *
- ****************************************************************************
- *
- * To be compiled with Open Watcom 1.9
- *
  */
 
 #include "rpnv.h"
@@ -97,7 +82,7 @@ void pull_stack()
 {
     stack[1] = stack[2];
     stack[2] = stack[3];
-    stack[3] = 0.0;
+    // stack[3] remains unaltered
 }
 
 void rotate_stack()

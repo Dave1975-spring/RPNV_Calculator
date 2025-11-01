@@ -20,21 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- ****************************************************************************
- *
- * Special thanks to:
- * - FreeDOS development team
- * - Jim Hall for his great tutorials on C and CONIO
- * - Shawn Hargreaves for his great FED text editor
- * - "root42" for his very usefull MS-DOS programming tutorial
- * - Liamtoh Resu for the several tests done and bugs highlighted
- * - Albert Chan for his help in understand & correct the DMS<>DD bug
- *
- ****************************************************************************
- *
- * To be compiled with Open Watcom 1.9
- *
  */
 
 /*************** INCLUDE STATEMENTS ***************/
@@ -52,7 +37,7 @@
 
 /*************** DEFINE STATEMENTS ***************/
 
-#define VERSION "1.0.0"
+#define VERSION "1.1.0"
 #define LOGFILE "data.log"
 #define STATEFILE "state.log"
 #define offset_col 7
@@ -128,7 +113,7 @@ char *butt_base[] = {"\373x","e^x","10^x","y^x","1/x","CHS","7","8","9","\366",
 char *butt_2ndF[] = {"x\375","LN","LOG","\257H.MS","\257H","\343","FIX","SCI","ENG","x\363y", 
 		     "\257R","\257P","SIN-1","COS-1","TAN-1","x!","DEG","RAD","GRD","x=0",
 		     "PSE","BST","PRGM","REG","PREFX","Lastx","x,r","y,r","L.R.","\257RAD",
-		     "HELP","2ndF","MEM","INT","FRC","Lastx","x","s","\344-","\257DEG"};
+		     "HELP","RAN#","MEM","INT","FRC","Lastx","x","s","\344-","\257DEG"};
 // to translate cursor position to button code according to HP10C convention
 int curpos_to_button[41]= { 0, 11, 12, 13, 14, 15, 16,  7,  8,  9, 10, 
 			       21, 22, 23, 24, 25, 26,  4,  5,  6, 20,
@@ -236,6 +221,10 @@ void manage_number_RUN_EXEC(int num); // dedicated function to manage number hit
 // In help.c
 // help function
 void show_help();   // HELP window if H is pressed
+
+// In backside.c
+// calculator backside
+void show_backside();   // Calculator backside if B is pressed
 
 // In buttons.c
 // define what each calc button does

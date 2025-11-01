@@ -20,21 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- ****************************************************************************
- *
- * Special thanks to:
- * - FreeDOS development team
- * - Jim Hall for his great tutorials on C and CONIO
- * - Shawn Hargreaves for his great FED text editor
- * - "root42" for his very usefull MS-DOS programming tutorial
- * - Liamtoh Resu for the several tests done and bugs highlighted
- * - Albert Chan for his help in understand & correct the DMS<>DD bug
- *
- ****************************************************************************
- *
- * To be compiled with Open Watcom 1.9
- *
  */
 
 #include "rpnv.h"
@@ -53,18 +38,22 @@ void show_help()   // HELP window if H is pressed
     _settextposition(2,1);
     _outtext(firstrow);
     _outtext("                Made for fun by Davide Erbetta in 2024-2025              \n"); 
-    _outtext("       Developed in C in FreeDOS with FED editor and OpewWatcom 1.9      \n\n");
-    _outtext("                   -> See README and LICENSE documents <-                \n\n"); 
+    _outtext("       Developed in C in FreeDOS with FED editor and OpewWatcom 1.9      \n");
+    _outtext("                                                                         \n");
+    _outtext("                   -> See README and LICENSE documents <-                \n");
+    _outtext("                                                                         \n"); 
     _outtext("       For fuctions behaviour and programming refer to HP-10C manual     \n");
-    _outtext("              Use arrow keys and SPACE bar to select the button          \n");
-    _outtext("            or use the mouse + left button or keyboard shortcuts:        \n\n");
-    _outtext("             All numbers + - / * . ENTER key can be used                 \n");
-    _outtext("             T --> roTaTe stack R\031    K --> toggle show stack            \n");
-    _outtext("             L --> recall last X      M --> show registers               \n");
-    _outtext("             S --> STOre in register  R --> ReCaLl from register         \n"); 
-    _outtext("             P --> \343                  F --> second function             \n");
-    _outtext("             E --> EEX add 10^ exp.   C --> CHS                          \n"); 
-    _outtext("             BACKSPACE --> CLX in EXEC mode, delete row in PRGM mode     \n\n"); 
+    _outtext("      Use arrow and SPACE to select the button or mouse or shortcuts:    \n");
+    _outtext("                                                                         \n");
+    _outtext("                All numbers + - / * . ENTER key can be used              \n");
+    _outtext("  T -> roTaTe stack R\031       L -> recall last X    F -> second function  \n");
+    _outtext("  S -> STOre in register     R -> ReCaLl register  G --> GOTO function   \n"); 
+    _outtext("  E -> EEX add 10^ exp.      P -> \343                C -> CHS              \n");
+    _outtext("  BACKSPACE -> CLx in EXEC mode, delete row in PRGM mode   H -> HELP     \n"); 
+    _outtext("                                                                         \n");
+    _outtext("                          Stand-alone functions:                         \n"); 
+    _outtext("  M -> show memory content   K -> show/hide stack  ESC -> Quit RPNV calc \n");
+    _outtext("  B -> show calc backside                                                                       \n");
     _outtext("   A 'data.log' file is created with buttons pressed and stack values    \n");
     _outtext(" A 'state.log' is created & read with stack, registers and program list  \n");
     _outtext(" In PROGRAM mode, new lines are instered in the list instead of overriden");

@@ -20,21 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- ****************************************************************************
- *
- * Special thanks to:
- * - FreeDOS development team
- * - Jim Hall for his great tutorials on C and CONIO
- * - Shawn Hargreaves for his great FED text editor
- * - "root42" for his very usefull MS-DOS programming tutorial
- * - Liamtoh Resu for the several tests done and bugs highlighted
- * - Albert Chan for his help in understand & correct the DMS<>DD bug
- *
- ****************************************************************************
- *
- * To be compiled with Open Watcom 1.9
- *
  */
 
 #include "rpnv.h"
@@ -754,12 +739,21 @@ void hit_button_at_curpos(int curpos)
 		second_f = false;
 	    } 
 	    break;
-	case 32: // f - 2nd function
+	case 32: // f - 2nd function / RAN# random number
 	    if (store_hit) store_hit = false;
 	    if (recall_hit) recall_hit = false; 
 	    if (second_f==false) second_f = true;
-	    else second_f = false;
-	    update_lcd_badge();
+	    else {
+		if (calc_mode==PRGM) fill_PRGM_row(0,42,curpos_to_button[curpos]); 
+		if ((calc_mode==RUN) || (calc_mode==EXEC)) { 
+		    push_stack();
+		    stack[0] = ((double)rand())/RAND_MAX;
+		}
+		if (enter_hit) enter_hit = false;
+		func_hit = true;
+		second_f = false;
+	    }
+	    update_lcd();
 	    break;
 	case 33: // P/R / MEM program list
 	    if (second_f==false) { 

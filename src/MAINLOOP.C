@@ -20,21 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- *
- ****************************************************************************
- *
- * Special thanks to:
- * - FreeDOS development team
- * - Jim Hall for his great tutorials on C and CONIO
- * - Shawn Hargreaves for his great FED text editor
- * - "root42" for his very usefull MS-DOS programming tutorial
- * - Liamtoh Resu for the several tests done and bugs highlighted
- * - Albert Chan for his help in understand & correct the DMS<>DD bug
- *
- ****************************************************************************
- *
- * To be compiled with Open Watcom 1.9
- *
  */
 
 #include "rpnv.h"
@@ -43,7 +28,6 @@ int main_loop()  // this is the main loop tracking the key pressed by the user
 {
     int c = 0,i = 0;
     int mouse_x,mouse_y,mouse_left,mouse_right;
-    char mouse_text[30];
 
     if (calc_mode==EXEC) { // if in EXECution mode, run the program stored in prgm_list at prgm_index
 	if (!EXEC_PSE) { 
@@ -145,20 +129,26 @@ int main_loop()  // this is the main loop tracking the key pressed by the user
 	    case 57: // 9
 		hit_button_at_curpos(9); 
 		break;
-	    case 99: // c for CHS
+	    case 66: case 98: // B for calculator backside
+		show_backside();
+		break;
+	    case 67: case 99: // c or C for CHS
 		hit_button_at_curpos(6);
 		break; 
-	    case 101: // e for EEX
+	    case 69: case 101: // e or E for EEX
 		second_f = false;
 		hit_button_at_curpos(16);
 		break;
-	    case 102: // f for SECOND FUNCTION
+	    case 70: case 102: // f or F for SECOND FUNCTION
 		hit_button_at_curpos(32);
 		break;
-	    case 104: // h for HELP
+	    case 71: case 103: // g or G for GOTO
+		hit_button_at_curpos(12);
+		break; 
+	    case 72: case 104: // h or H for HELP
 		show_help();
 		break;
-	    case 107: // k for STACK
+	    case 75: case 107: // k or K for show/hide STACK
 		if (show_stack==false) {
 		    show_stack = true;
 		    show_full_stack();
@@ -167,26 +157,26 @@ int main_loop()  // this is the main loop tracking the key pressed by the user
 		    clear_full_stack();
 		}
 		break;
-	    case 108: // l for LAST X
+	    case 76: case 108: // l or L for LAST X
 		second_f = true;
 		hit_button_at_curpos(26);
 		break;
-	    case 109: // m for show memory registers
+	    case 77: case 109: // m or M for show memory registers
 		show_memory(); 
 		break;
-	    case 112: // p for PI
+	    case 80: case 112: // p or P for PI
 		second_f = true;
 		hit_button_at_curpos(6);
 		break;
-	    case 114: // R for RCL 
+	    case 82: case 114: // r or R for RCL 
 		second_f = false;
 		hit_button_at_curpos(35);
 		break;
-	    case 115: // S for STO
+	    case 83: case 115: // s or S for STO
 		second_f = false;
 		hit_button_at_curpos(34);
 		break;
-	    case 116: // T for R|v , roTaTe stack
+	    case 84: case 116: // t or T for R|v , roTaTe stack
 		second_f = false;
 		hit_button_at_curpos(23);
 		break;
