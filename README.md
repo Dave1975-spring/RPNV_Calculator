@@ -66,6 +66,8 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 _Calculator front side_
 
 
+
+
 <img width="716" height="398" alt="backside" src="https://github.com/user-attachments/assets/9daafc31-239b-4ea5-b440-6eb235d3be36" />
 
 _Calculator back side_
