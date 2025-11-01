@@ -1,7 +1,7 @@
 # Compile and link with Open WATCOM C Compiler 1.9 with the command below, from the directoy 
 # where *.c and *.h files are stored:
 
-wcl *.c 
+wcl *.c -fm -mm
 
 # the resulting .exe file is the executable file to run the program (not necessarely is named rpnv.exe).
 # During compiling and link several warning messages may appear, due to the file rpnv.h included by each .c file.
