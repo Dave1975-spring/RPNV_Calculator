@@ -61,7 +61,8 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 - ESC to quit the calculator
 
 
-![Calc layout](https://github.com/user-attachments/assets/05ecbbef-787c-4fd0-afc1-cd8879086e32)
+<img width="717" height="397" alt="frontside" src="https://github.com/user-attachments/assets/442145ea-8f30-47dc-a079-efa3e329989e" />
+
 
 _Calculator front side_
 
