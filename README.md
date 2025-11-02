@@ -55,7 +55,7 @@ Use the arrow keys to move the cursor on the desired button then hit SPACE bar t
 - R recalls the value from a memory register from 0 to 9 and place it in the stack X register
 - C change sign
 - P recalls the pi-greek value
-- F toggles the F second function
+- F second function button
 - E for EEX function
 - B to display calculator backside
 - ESC to quit the calculator
